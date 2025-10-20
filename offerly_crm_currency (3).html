@@ -1,0 +1,2579 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offerly Pro - CRM Sistem</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState } = React;
+
+        // Icons
+        const Users = ({size=24}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
+        const Plus = ({size=24}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
+        const Edit = ({size=24}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>;
+        const Trash2 = ({size=24}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>;
+        const FileJson = ({size=24}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>;
+        const Eye = ({size=24}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>;
+        const Download = ({size=24}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>;
+        const MessageSquare = ({size=24}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>;
+        const X = ({size=24}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+        const Search = ({size=24}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>;
+        const FileText = ({size=24}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="13" x2="12" y2="19"/><line x1="9" y1="16" x2="15" y2="16"/></svg>;
+        const Mail = ({size=24}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>;
+        const Clock = ({size=24}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
+
+        function OfferlyApp() {
+          const [activeTab, setActiveTab] = useState('crm');
+          const [clients, setClients] = useState([]);
+          const [offers, setOffers] = useState([]);
+          const [invoices, setInvoices] = useState([]);
+          const [projects, setProjects] = useState([]);
+          const [reminders, setReminders] = useState([]);
+const [showReminderForm, setShowReminderForm] = useState(false);
+const [newReminder, setNewReminder] = useState({
+  clientId: '',
+  clientName: '',
+  description: '',
+  daysFromNow: 7,
+  reminderDate: ''
+});
+          const [selectedClient, setSelectedClient] = useState(null);
+          const [selectedProject, setSelectedProject] = useState(null);
+          const [searchTerm, setSearchTerm] = useState('');
+          const [showClientForm, setShowClientForm] = useState(false);
+          const [editingClient, setEditingClient] = useState(null);
+          const [newComment, setNewComment] = useState('');
+          const [showInvoiceForm, setShowInvoiceForm] = useState(false);
+          const [selectedOffer, setSelectedOffer] = useState(null);
+          const [showTaskForm, setShowTaskForm] = useState(false);
+          const [showMemberForm, setShowMemberForm] = useState(false);
+          const [showNewProjectForm, setShowNewProjectForm] = useState(false);
+          const [newProjectData, setNewProjectData] = useState({clientId: '', title: '', description: '', startDate: new Date().toISOString().split('T')[0], endDate: ''});
+          const [newTaskData, setNewTaskData] = useState({title: '', description: '', assignee: '', dueDate: ''});
+          const [newMemberData, setNewMemberData] = useState({name: '', email: '', role: ''});
+          const [standaloneInvoiceItems, setStandaloneInvoiceItems] = useState([]);
+          const [standaloneInvoiceForm, setStandaloneInvoiceForm] = useState({clientId: '', invoiceNumber: '', issueDate: new Date().toISOString().split('T')[0], dueDate: '', vatRate: 20, paymentTerms: '', notes: '', status: 'issued', currency: 'EUR'});
+          const [newInvoiceItem, setNewInvoiceItem] = useState({description: '', quantity: 1, price: 0, discount: 0, discountType: '%'});
+          const [companyInfo, setCompanyInfo] = useState({
+            name: 'Vaša Kompanija d.o.o.',
+            pib: '123456789',
+            email: 'info@vasa-kompanija.rs',
+            phone: '+381 1 000 0000',
+            address: 'Glavni gradska ulica 1',
+            city: 'Beograd',
+            logo: '',
+            bankAccount: '',
+            website: '',
+            notes: ''
+          });
+          const [quickOfferData, setQuickOfferData] = useState({
+  offerTitle: '',
+  items: []
+});
+const [newQuickItem, setNewQuickItem] = useState({
+  description: '',
+  quantity: 1,
+  price: 0,
+  discount: 0,
+  discountType: '%'
+});
+          const [formData, setFormData] = useState({
+            clientName: '', title: '', items: [], parseStep: 'upload', selectedSheet: '',
+            sheetData: [], headers: [], extractedImages: [], allSheetsData: null,
+            columnMapping: { description: '', price: '', quantity: '', dimensions: '', weight: '', volume: '' }
+          });
+
+          const [clientForm, setClientForm] = useState({
+            name: '', pib: '', email: '', phone: '', address: '', city: '', notes: ''
+          });
+
+          const [invoiceForm, setInvoiceForm] = useState({
+            invoiceNumber: '', issueDate: new Date().toISOString().split('T')[0], dueDate: '', vatRate: 20, paymentTerms: '', notes: '', status: 'issued', currency: 'EUR'
+          });
+
+          const getCurrencySymbol = (currency) => {
+            return currency === 'RSD' ? 'дин.' : '€';
+          };
+
+          const generateInvoiceNumber = () => {
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const count = invoices.filter(i => i.issueDate.includes(year + '-' + month)).length + 1;
+            return `ФА-${year}${month}-${String(count).padStart(4, '0')}`;
+          };
+
+          const addClient = () => {
+            if (!clientForm.name || !clientForm.email) {
+              alert('Popunite naziv i email!');
+              return;
+            }
+            
+            const newClient = {
+              id: Date.now(),
+              ...clientForm,
+              createdDate: new Date().toLocaleDateString('sr-RS'),
+              history: [],
+              totalOffers: 0,
+              totalAmount: 0
+            };
+            
+            setClients([newClient, ...clients]);
+            setClientForm({ name: '', pib: '', email: '', phone: '', address: '', city: '', notes: '' });
+            setShowClientForm(false);
+            alert('Klijent dodan!');
+          };
+
+          const updateClient = () => {
+            if (!clientForm.name || !clientForm.email) {
+              alert('Popunite naziv i email!');
+              return;
+            }
+            
+            setClients(clients.map(c => c.id === editingClient.id ? { ...editingClient, ...clientForm } : c));
+            setEditingClient(null);
+            setClientForm({ name: '', pib: '', email: '', phone: '', address: '', city: '', notes: '' });
+            setShowClientForm(false);
+            alert('Klijent ažuriran!');
+          };
+
+          const deleteClient = (id) => {
+            if (confirm('Sigurno želiš da obrišeš ovog klijenta?')) {
+              setClients(clients.filter(c => c.id !== id));
+              setSelectedClient(null);
+            }
+          };
+
+          const filteredClients = clients.filter(c => 
+            c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            c.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            c.pib.includes(searchTerm)
+          );
+const calculateReminderDate = (daysFromNow) => {
+  const date = new Date();
+  date.setDate(date.getDate() + daysFromNow);
+  return date.toISOString().split('T')[0];
+};
+
+const addReminder = () => {
+  if (!newReminder.clientId || !newReminder.description.trim()) {
+    alert('Izaberi klijenta i unesi opis!');
+    return;
+  }
+
+  const reminderDate = calculateReminderDate(newReminder.daysFromNow);
+  const reminder = {
+    id: Date.now(),
+    clientId: newReminder.clientId,
+    clientName: newReminder.clientName,
+    description: newReminder.description,
+    reminderDate: reminderDate,
+    createdDate: new Date().toLocaleDateString('sr-RS'),
+    completed: false
+  };
+
+  setReminders([reminder, ...reminders]);
+  setNewReminder({ clientId: '', clientName: '', description: '', daysFromNow: 7, reminderDate: '' });
+  setShowReminderForm(false);
+  alert('✓ Reminder postavljen za ' + reminderDate);
+};
+
+const completeReminder = (id) => {
+  setReminders(reminders.map(r => r.id === id ? {...r, completed: true} : r));
+};
+
+const deleteReminder = (id) => {
+  if (confirm('Obriši reminder?')) {
+    setReminders(reminders.filter(r => r.id !== id));
+  }
+};
+
+const getDueReminders = () => {
+  const today = new Date().toISOString().split('T')[0];
+  return reminders.filter(r => !r.completed && r.reminderDate <= today);
+};
+
+const getUpcomingReminders = () => {
+  const today = new Date().toISOString().split('T')[0];
+  return reminders.filter(r => !r.completed && r.reminderDate > today).sort((a, b) => new Date(a.reminderDate) - new Date(b.reminderDate));
+};
+
+const getCompletedReminders = () => {
+  return reminders.filter(r => r.completed);
+};
+          const handleCreateOffer = () => {
+            if (!selectedClient) {
+              alert('Prvo izaberi klijenta!');
+              return;
+            }
+            if (!formData.title || formData.title.trim() === '') {
+              alert('Unesi naslov ponude!');
+              return;
+            }
+            if (!formData.items || formData.items.length === 0) {
+              alert('Nema stavki u ponudi!');
+              return;
+            }
+
+            const subtotal = formData.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+            const totalDiscount = formData.items.reduce((sum, item) => {
+              const discount = item.discount || 0;
+              const type = item.discountType || '%';
+              const basePrice = item.quantity * item.price;
+              return sum + (type === '%' ? (basePrice * discount) / 100 : discount);
+            }, 0);
+            const totalAmount = subtotal - totalDiscount;
+
+            const newOffer = {
+              id: Date.now(),
+              clientId: selectedClient.id,
+              clientName: selectedClient.name,
+              title: formData.title,
+              items: formData.items,
+              status: 'pending',
+              createdDate: new Date().toLocaleDateString('sr-RS'),
+              subtotal: subtotal,
+              totalDiscount: totalDiscount,
+              totalAmount: totalAmount,
+              note: formData.note || ''
+            };
+
+            setOffers([newOffer, ...offers]);
+            
+            const updatedClients = clients.map(c => {
+              if (c.id === selectedClient.id) {
+                return {
+                  ...c,
+                  history: [{
+                    type: 'offer',
+                    title: formData.title,
+                    date: new Date().toLocaleDateString('sr-RS'),
+                    amount: totalAmount,
+                    offerId: newOffer.id
+                  }, ...c.history],
+                  totalOffers: c.totalOffers + 1,
+                  totalAmount: c.totalAmount + totalAmount
+                };
+              }
+              return c;
+            });
+            
+            setClients(updatedClients);
+
+            setFormData({
+              clientName: '', title: '', items: [], parseStep: 'upload', selectedSheet: '',
+              sheetData: [], headers: [], extractedImages: [], allSheetsData: null,
+              columnMapping: { description: '', price: '', quantity: '', dimensions: '', weight: '', volume: '' },
+              discount: 0,
+              discountType: '%',
+              note: ''
+            });
+            
+            alert('✓ Ponuda kreirana!');
+            setActiveTab('offers');
+          };
+
+          const handleCreateInvoice = () => {
+            if (!selectedOffer) {
+              alert('Prvo izaberi ponudu!');
+              return;
+            }
+
+            const subtotal = selectedOffer.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+            const vatAmount = (subtotal * invoiceForm.vatRate) / 100;
+            const totalAmount = subtotal + vatAmount;
+
+            const newInvoice = {
+              id: Date.now(),
+              invoiceNumber: invoiceForm.invoiceNumber || generateInvoiceNumber(),
+              offerId: selectedOffer.id,
+              clientId: selectedOffer.clientId,
+              clientName: selectedOffer.clientName,
+              offerTitle: selectedOffer.title,
+              items: selectedOffer.items,
+              issueDate: invoiceForm.issueDate,
+              dueDate: invoiceForm.dueDate,
+              subtotal: subtotal,
+              vatRate: invoiceForm.vatRate,
+              vatAmount: vatAmount,
+              totalAmount: totalAmount,
+              status: invoiceForm.status,
+              paymentTerms: invoiceForm.paymentTerms,
+              notes: invoiceForm.notes,
+              currency: invoiceForm.currency,
+              createdDate: new Date().toLocaleDateString('sr-RS')
+            };
+
+            setInvoices([newInvoice, ...invoices]);
+            setShowInvoiceForm(false);
+            setSelectedOffer(null);
+            setInvoiceForm({ invoiceNumber: '', issueDate: new Date().toISOString().split('T')[0], dueDate: '', vatRate: 20, paymentTerms: '', notes: '', status: 'issued', currency: 'EUR' });
+            alert('✓ Faktura kreirana: ' + newInvoice.invoiceNumber);
+            setActiveTab('invoices');
+          };
+
+          const addCommentToClient = () => {
+            if (!newComment.trim()) return;
+            
+            setClients(clients.map(c => {
+              if (c.id === selectedClient.id) {
+                return {
+                  ...c,
+                  history: [{
+                    type: 'comment',
+                    text: newComment,
+                    date: new Date().toLocaleDateString('sr-RS') + ' ' + new Date().toLocaleTimeString('sr-RS', { hour: '2-digit', minute: '2-digit' })
+                  }, ...c.history]
+                };
+              }
+              return c;
+            }));
+            
+            setSelectedClient(prev => ({
+              ...prev,
+              history: [{
+                type: 'comment',
+                text: newComment,
+                date: new Date().toLocaleDateString('sr-RS') + ' ' + new Date().toLocaleTimeString('sr-RS', { hour: '2-digit', minute: '2-digit' })
+              }, ...prev.history]
+            }));
+            
+            setNewComment('');
+          };
+
+          const exportInvoiceHTML = (invoice) => {
+            const currencySymbol = getCurrencySymbol(invoice.currency);
+            const logoImg = companyInfo.logo ? '<img src="' + companyInfo.logo + '" style="max-height:80px" alt="Logo">' : '';
+            
+            let itemsHtml = '';
+            invoice.items.forEach((item, idx) => {
+              const basePrice = item.quantity * item.price;
+              const discount = item.discount || 0;
+              const discountType = item.discountType || '%';
+              const discountAmount = discountType === '%' ? (basePrice * discount) / 100 : discount;
+              const finalPrice = basePrice - discountAmount;
+              const discountHtml = discount > 0 ? '<strong style="color:red">-' + discount + discountType + '</strong>' : '-';
+              itemsHtml += '<tr><td>' + (idx + 1) + '</td><td>' + item.description + '</td><td style="text-align:right">' + item.quantity + '</td><td style="text-align:right">' + item.price.toFixed(2) + '</td><td style="text-align:center">' + discountHtml + '</td><td style="text-align:right"><strong>' + finalPrice.toFixed(2) + '</strong></td></tr>';
+            });
+
+            const html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;padding:40px;background:white}.container{max-width:950px;margin:0 auto;background:white;padding:30px;border:2px solid #4F46E5}.header{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #4F46E5;padding-bottom:20px;margin-bottom:30px}.header-left{flex:1}.header-right{text-align:right}.header h1{color:#4F46E5;font-size:32px;margin:0}.header p{color:#666;font-size:12px;margin:5px 0}.invoice-info{display:grid;grid-template-columns:1fr 1fr;margin-bottom:30px;gap:20px}.info-section{padding:15px;background:#f8f8f8;border-radius:5px}.info-section p{margin:5px 0;font-size:12px}.info-section strong{display:block;margin-bottom:10px;color:#4F46E5}table{width:100%;border-collapse:collapse;margin:20px 0}th{background:#4F46E5;color:white;padding:12px;font-size:11px;text-align:left}td{border-bottom:1px solid #E5E7EB;padding:10px;font-size:11px}tr:nth-child(even){background:#f8f8f8}.totals{margin-top:20px}.total-row{display:grid;grid-template-columns:2fr 1fr;padding:10px 0;border-bottom:1px solid #E5E7EB}.total-row strong{text-align:right}.total-row.highlight{border-bottom:2px solid #4F46E5;border-top:2px solid #4F46E5;padding:15px 0;font-size:13px;background:#f0f0f0}.status{display:inline-block;padding:5px 10px;border-radius:3px;font-weight:bold;font-size:12px}.status.issued{background:#FEF3C7;color:#92400E}.status.paid{background:#DCFCE7;color:#166534}.status.overdue{background:#FEE2E2;color:#991B1B}.footer{margin-top:30px;border-top:1px solid #E5E7EB;padding-top:20px;text-align:center;color:#666;font-size:11px}</style></head><body><div class="container"><div class="header"><div class="header-left"><h1>FAKTURA</h1></div><div class="header-right">' + logoImg + '</div></div><div class="header" style="border:none;padding:0;margin-bottom:20px"><div><p><strong>Broj:</strong> ' + invoice.invoiceNumber + '</p><p><strong>Datum:</strong> ' + invoice.issueDate + '</p><p><strong>Valuta:</strong> ' + invoice.currency + '</p></div></div><div class="invoice-info"><div class="info-section"><strong>Izdavač:</strong><p><strong>' + companyInfo.name + '</strong></p><p>PIB: ' + companyInfo.pib + '</p><p>' + companyInfo.address + ', ' + companyInfo.city + '</p><p>Email: ' + companyInfo.email + '</p><p>Telefon: ' + companyInfo.phone + '</p>' + (companyInfo.bankAccount ? '<p>Račun: ' + companyInfo.bankAccount + '</p>' : '') + '</div><div class="info-section"><strong>Naručilac:</strong><p><strong>' + invoice.clientName + '</strong></p><p>Rok plaćanja: ' + (invoice.dueDate || 'Odmah') + '</p><span class="status ' + (invoice.status === 'paid' ? 'paid' : invoice.status === 'overdue' ? 'overdue' : 'issued') + '">' + invoice.status.toUpperCase() + '</span></div></div><table><thead><tr><th>Redni broj</th><th>Opis stavke</th><th style="text-align:right">Količina</th><th style="text-align:right">Cena po komadu</th><th style="text-align:center">Popust</th><th style="text-align:right">Iznos (' + currencySymbol + ')</th></tr></thead><tbody>' + itemsHtml + '</tbody></table><div class="totals"><div class="total-row"><span>Ukupno bez PDV-a:</span><strong>' + invoice.subtotal.toFixed(2) + ' ' + currencySymbol + '</strong></div><div class="total-row"><span>PDV (' + invoice.vatRate + '%):</span><strong>' + invoice.vatAmount.toFixed(2) + ' ' + currencySymbol + '</strong></div><div class="total-row highlight"><span>UKUPNO ZA PLAĆANJE:</span><strong>' + invoice.totalAmount.toFixed(2) + ' ' + currencySymbol + '</strong></div></div>' + (invoice.notes ? '<div style="margin-top:20px;padding:15px;background:#FEF3C7;border-radius:5px"><strong>Napomena:</strong> ' + invoice.notes + '</div>' : '') + (companyInfo.notes ? '<div style="margin-top:15px;padding:15px;background:#f0f0f0;border-radius:5px"><strong>Dodatne napomene:</strong> ' + companyInfo.notes + '</div>' : '') + '<div class="footer"><p>Ova faktura je izdata u skladu sa Zakonom o PDV-u Republike Srbije.</p><p>Datum štampanja: ' + new Date().toLocaleDateString('sr-RS') + '</p></div></div></body></html>';
+            
+            const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Faktura_' + invoice.invoiceNumber + '.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            alert('Faktura preuzeta! Otvori u browseru → Print → Save as PDF');
+          };
+
+          const exportInvoiceExcel = (invoice) => {
+            const currencySymbol = getCurrencySymbol(invoice.currency);
+            let csv = 'Faktura\n\n';
+            csv += `Broj:,${invoice.invoiceNumber}\n`;
+            csv += `Datum:,${invoice.issueDate}\n`;
+            csv += `Valuta:,${invoice.currency}\n`;
+            csv += `Rok plaćanja:,${invoice.dueDate}\n`;
+            csv += `Status:,${invoice.status}\n\n`;
+            csv += `Klijent:,${invoice.clientName}\n\n`;
+            csv += 'Stavke:\n';
+            csv += 'Redni broj,Opis,Količina,Cena,Popust,Iznos\n';
+            invoice.items.forEach((item, idx) => {
+              const basePrice = item.quantity * item.price;
+              const discount = item.discount || 0;
+              const discountType = item.discountType || '%';
+              const discountAmount = discountType === '%' ? (basePrice * discount) / 100 : discount;
+              const finalPrice = basePrice - discountAmount;
+              csv += `${idx+1},"${item.description}",${item.quantity},${item.price.toFixed(2)},"${discount > 0 ? '-' + discount + discountType : '-'}",${finalPrice.toFixed(2)}\n`;
+            });
+            csv += `\nUkupno bez PDV-a:,${invoice.subtotal.toFixed(2)}\n`;
+            csv += `PDV (${invoice.vatRate}%):,${invoice.vatAmount.toFixed(2)}\n`;
+            csv += `UKUPNO:,${invoice.totalAmount.toFixed(2)} ${invoice.currency}\n`;
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Faktura_${invoice.invoiceNumber}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+          };
+
+          const updateInvoiceStatus = (invoiceId, newStatus) => {
+            setInvoices(invoices.map(inv => inv.id === invoiceId ? {...inv, status: newStatus} : inv));
+          };
+
+          const exportAllData = () => {
+            const data = {
+              clients: clients,
+              offers: offers,
+              invoices: invoices,
+              projects: projects,
+              exportDate: new Date().toLocaleDateString('sr-RS')
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `CRM_Backup_${new Date().getTime()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+          };
+
+          // PROJEKTI FUNKCIJE
+          const createProjectFromOffer = (offer) => {
+            const newProject = {
+              id: Date.now(),
+              offerId: offer.id,
+              clientId: offer.clientId,
+              clientName: offer.clientName,
+              title: offer.title,
+              status: 'active',
+              createdDate: new Date().toLocaleDateString('sr-RS'),
+              startDate: new Date().toISOString().split('T')[0],
+              endDate: '',
+              tasks: [],
+              members: [{id: Date.now(), name: 'Projekat Manager', email: 'pm@offerly.rs', role: 'Project Manager', hoursLogged: 0}],
+              description: offer.note || ''
+            };
+            setProjects([newProject, ...projects]);
+            setSelectedProject(newProject);
+            setActiveTab('projects');
+            alert('✓ Projekat kreiran iz ponude!');
+          };
+
+          const createNewProject = () => {
+            const selectedClient = clients.find(c => c.id.toString() === newProjectData.clientId.toString());
+            if (!selectedClient) {
+              alert('Izaberi klijenta!');
+              return;
+            }
+            if (!newProjectData.title.trim()) {
+              alert('Unesi naziv projekta!');
+              return;
+            }
+
+            const newProject = {
+              id: Date.now(),
+              offerId: null,
+              clientId: selectedClient.id,
+              clientName: selectedClient.name,
+              title: newProjectData.title,
+              status: 'active',
+              createdDate: new Date().toLocaleDateString('sr-RS'),
+              startDate: newProjectData.startDate,
+              endDate: newProjectData.endDate,
+              tasks: [],
+              members: [{id: Date.now(), name: 'Projekat Manager', email: 'pm@offerly.rs', role: 'Project Manager', hoursLogged: 0}],
+              description: newProjectData.description
+            };
+
+            setProjects([newProject, ...projects]);
+            setSelectedProject(newProject);
+            setNewProjectData({clientId: '', title: '', description: '', startDate: new Date().toISOString().split('T')[0], endDate: ''});
+            setShowNewProjectForm(false);
+            alert('✓ Projekat kreiran!');
+          };
+
+          const addTaskToProject = () => {
+            if (!newTaskData.title.trim() || !selectedProject) {
+              alert('Popunite naslov zadatka!');
+              return;
+            }
+            const updatedProjects = projects.map(p => {
+              if (p.id === selectedProject.id) {
+                return {
+                  ...p,
+                  tasks: [{
+                    id: Date.now(),
+                    title: newTaskData.title,
+                    description: newTaskData.description,
+                    assignee: newTaskData.assignee || 'Nedodeljeno',
+                    status: 'pending',
+                    dueDate: newTaskData.dueDate,
+                    createdDate: new Date().toLocaleDateString('sr-RS'),
+                    hoursLogged: 0
+                  }, ...p.tasks]
+                };
+              }
+              return p;
+            });
+            setProjects(updatedProjects);
+            setSelectedProject({...selectedProject, tasks: updatedProjects.find(p => p.id === selectedProject.id).tasks});
+            setNewTaskData({title: '', description: '', assignee: '', dueDate: ''});
+            setShowTaskForm(false);
+            alert('✓ Zadatak dodan!');
+          };
+
+          const updateTaskStatus = (taskId, newStatus) => {
+            const updatedProjects = projects.map(p => {
+              if (p.id === selectedProject.id) {
+                return {
+                  ...p,
+                  tasks: p.tasks.map(t => t.id === taskId ? {...t, status: newStatus} : t)
+                };
+              }
+              return p;
+            });
+            setProjects(updatedProjects);
+            setSelectedProject({...selectedProject, tasks: updatedProjects.find(p => p.id === selectedProject.id).tasks});
+          };
+
+          const updateTaskHours = (taskId, hours) => {
+            const updatedProjects = projects.map(p => {
+              if (p.id === selectedProject.id) {
+                return {
+                  ...p,
+                  tasks: p.tasks.map(t => t.id === taskId ? {...t, hoursLogged: parseFloat(hours) || 0} : t)
+                };
+              }
+              return p;
+            });
+            setProjects(updatedProjects);
+            setSelectedProject({...selectedProject, tasks: updatedProjects.find(p => p.id === selectedProject.id).tasks});
+          };
+
+          const addMemberToProject = () => {
+            if (!newMemberData.name.trim() || !newMemberData.email.trim()) {
+              alert('Popunite ime i email!');
+              return;
+            }
+            const updatedProjects = projects.map(p => {
+              if (p.id === selectedProject.id) {
+                return {
+                  ...p,
+                  members: [...p.members, {id: Date.now(), name: newMemberData.name, email: newMemberData.email, role: newMemberData.role || 'Član tima', hoursLogged: 0}]
+                };
+              }
+              return p;
+            });
+            setProjects(updatedProjects);
+            setSelectedProject({...selectedProject, members: updatedProjects.find(p => p.id === selectedProject.id).members});
+            setNewMemberData({name: '', email: '', role: ''});
+            setShowMemberForm(false);
+            alert('✓ Član dodan!');
+          };
+
+          const deleteMember = (memberId) => {
+            if (confirm('Obriši člana iz projekta?')) {
+              const updatedProjects = projects.map(p => {
+                if (p.id === selectedProject.id) {
+                  return {...p, members: p.members.filter(m => m.id !== memberId)};
+                }
+                return p;
+              });
+              setProjects(updatedProjects);
+              setSelectedProject({...selectedProject, members: updatedProjects.find(p => p.id === selectedProject.id).members});
+            }
+          };
+
+          const deleteTask = (taskId) => {
+            if (confirm('Obriši zadatak?')) {
+              const updatedProjects = projects.map(p => {
+                if (p.id === selectedProject.id) {
+                  return {...p, tasks: p.tasks.filter(t => t.id !== taskId)};
+                }
+                return p;
+              });
+              setProjects(updatedProjects);
+              setSelectedProject({...selectedProject, tasks: updatedProjects.find(p => p.id === selectedProject.id).tasks});
+            }
+          };
+
+          const getProjectStats = (project) => {
+            const totalHours = project.tasks.reduce((sum, t) => sum + (t.hoursLogged || 0), 0);
+            const completedTasks = project.tasks.filter(t => t.status === 'completed').length;
+            const overdueTasks = project.tasks.filter(t => t.status === 'overdue').length;
+            return {totalHours, completedTasks, overdueTasks, totalTasks: project.tasks.length};
+          };
+
+          const getStatusColor = (status) => {
+            switch(status) {
+              case 'completed': return 'bg-green-100 text-green-800';
+              case 'in_progress': return 'bg-blue-100 text-blue-800';
+              case 'overdue': return 'bg-red-100 text-red-800';
+              default: return 'bg-yellow-100 text-yellow-800';
+            }
+          };
+
+          // FUNKCIJE ZA NEZAVISNU FAKTURU
+          const addItemToStandaloneInvoice = () => {
+            if (!newInvoiceItem.description.trim() || newInvoiceItem.price <= 0) {
+              alert('Popunite opis i cenu stavke!');
+              return;
+            }
+            setStandaloneInvoiceItems([...standaloneInvoiceItems, {...newInvoiceItem, id: Date.now()}]);
+            setNewInvoiceItem({description: '', quantity: 1, price: 0, discount: 0, discountType: '%'});
+          };
+
+          const removeItemFromStandaloneInvoice = (id) => {
+            setStandaloneInvoiceItems(standaloneInvoiceItems.filter(item => item.id !== id));
+          };
+
+          const createStandaloneInvoice = () => {
+            const selectedClient = clients.find(c => c.id.toString() === standaloneInvoiceForm.clientId.toString());
+            if (!selectedClient) {
+              alert('Izaberi klijenta!');
+              return;
+            }
+            if (standaloneInvoiceItems.length === 0) {
+              alert('Dodaj najmanje jednu stavku!');
+              return;
+            }
+
+            const subtotal = standaloneInvoiceItems.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+            const vatAmount = (subtotal * standaloneInvoiceForm.vatRate) / 100;
+            const totalAmount = subtotal + vatAmount;
+
+            const newInvoice = {
+              id: Date.now(),
+              invoiceNumber: standaloneInvoiceForm.invoiceNumber || generateInvoiceNumber(),
+              offerId: null,
+              clientId: selectedClient.id,
+              clientName: selectedClient.name,
+              offerTitle: 'Nezavisna Faktura',
+              items: standaloneInvoiceItems,
+              issueDate: standaloneInvoiceForm.issueDate,
+              dueDate: standaloneInvoiceForm.dueDate,
+              subtotal: subtotal,
+              vatRate: standaloneInvoiceForm.vatRate,
+              vatAmount: vatAmount,
+              totalAmount: totalAmount,
+              status: standaloneInvoiceForm.status,
+              paymentTerms: standaloneInvoiceForm.paymentTerms,
+              notes: standaloneInvoiceForm.notes,
+              currency: standaloneInvoiceForm.currency,
+              createdDate: new Date().toLocaleDateString('sr-RS')
+            };
+
+            setInvoices([newInvoice, ...invoices]);
+            setStandaloneInvoiceItems([]);
+            setStandaloneInvoiceForm({clientId: '', invoiceNumber: '', issueDate: new Date().toISOString().split('T')[0], dueDate: '', vatRate: 20, paymentTerms: '', notes: '', status: 'issued', currency: 'EUR'});
+            alert('✓ Faktura kreirana: ' + newInvoice.invoiceNumber);
+            setActiveTab('invoices');
+          };
+
+          // ANALITIKA FUNKCIJE
+          const getAnalyticsData = () => {
+            const offersTotal = offers.reduce((sum, o) => sum + o.totalAmount, 0);
+            const invoicesTotal = invoices.reduce((sum, i) => sum + i.totalAmount, 0);
+            const paidInvoices = invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.totalAmount, 0);
+
+            // Profitabilnost po klijentu
+            const clientProfits = {};
+            offers.forEach(o => {
+              if (!clientProfits[o.clientName]) {
+                clientProfits[o.clientName] = 0;
+              }
+              clientProfits[o.clientName] += o.totalAmount;
+            });
+
+            // Top proizvodi po frekvenciji
+            const serviceFrequency = {};
+            offers.forEach(o => {
+              o.items.forEach(item => {
+                const key = item.description;
+                if (!serviceFrequency[key]) {
+                  serviceFrequency[key] = {name: item.description, count: 0, totalRevenue: 0};
+                }
+                serviceFrequency[key].count += item.quantity;
+                serviceFrequency[key].totalRevenue += (item.quantity * item.price);
+              });
+            });
+
+            return {
+              offersTotal,
+              invoicesTotal,
+              paidInvoices,
+              clientProfits: Object.entries(clientProfits).map(([name, value]) => ({name, value})).sort((a, b) => b.value - a.value).slice(0, 5),
+              topServices: Object.values(serviceFrequency).sort((a, b) => b.totalRevenue - a.totalRevenue).slice(0, 5)
+            };
+          };
+
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+              <div className="max-w-7xl mx-auto">
+                <div className="mb-8">
+                  <h1 className="text-4xl font-bold text-indigo-900 mb-2">Offerly Pro - CRM</h1>
+                  <p className="text-indigo-600">Kompletan sistem za upravljanje klijentima, ponudama, fakturama i projektima</p>
+                </div>
+
+               {/* HEADER */}
+<div className="mb-6 flex justify-between items-center bg-white rounded-lg shadow-lg p-4">
+  <div>
+    <h1 className="text-3xl font-bold text-indigo-900">Offerly Pro</h1>
+    <p className="text-sm text-indigo-600">Upravljanje poslom na jednom mestu</p>
+  </div>
+  <button onClick={exportAllData} className="px-4 py-2 rounded-lg font-semibold bg-green-500 text-white hover:bg-green-600 transition flex items-center gap-2 text-sm">
+    <Download size={18} /> Backup
+  </button>
+</div>
+
+{/* NAVIGACIJA */}
+<div className="mb-6 bg-white rounded-lg shadow-lg p-3 overflow-x-auto">
+  <div className="flex gap-2 min-w-max">
+    <button onClick={() => setActiveTab('analytics')} className={`px-4 py-2 rounded-lg font-semibold transition whitespace-nowrap text-sm ${activeTab === 'analytics' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-100'}`}>📊 Dashboard</button>
+    <button onClick={() => setActiveTab('reminders')} className={`px-4 py-2 rounded-lg font-semibold transition whitespace-nowrap text-sm ${activeTab === 'reminders' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-100'}`}>
+  ⏰ Reminderi ({reminders.filter(r => !r.completed).length})
+</button>
+    <button onClick={() => setActiveTab('crm')} className={`px-4 py-2 rounded-lg font-semibold transition whitespace-nowrap text-sm ${activeTab === 'crm' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-100'}`}>👥 Klijenti ({clients.length})</button>
+    <div className="border-l border-gray-300"></div>
+    <button onClick={() => setActiveTab('quick-offer')} className="px-4 py-2 rounded-lg font-bold transition whitespace-nowrap text-sm bg-green-500 text-white hover:bg-green-600">⚡ Nova Ponuda</button>
+    <button onClick={() => setActiveTab('offers')} className={`px-4 py-2 rounded-lg font-semibold transition whitespace-nowrap text-sm ${activeTab === 'offers' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-100'}`}>📋 Ponude ({offers.length})</button>
+    <button onClick={() => setActiveTab('create-invoice')} className="px-4 py-2 rounded-lg font-bold transition whitespace-nowrap text-sm bg-blue-500 text-white hover:bg-blue-600">+ Faktura</button>
+    <button onClick={() => setActiveTab('invoices')} className={`px-4 py-2 rounded-lg font-semibold transition whitespace-nowrap text-sm ${activeTab === 'invoices' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-100'}`}>💳 Fakture ({invoices.length})</button>
+    <div className="border-l border-gray-300"></div>
+    <button onClick={() => setActiveTab('projects')} className={`px-4 py-2 rounded-lg font-semibold transition whitespace-nowrap text-sm ${activeTab === 'projects' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-100'}`}>📁 Projekti ({projects.length})</button>
+    <button onClick={() => setActiveTab('company')} className={`px-4 py-2 rounded-lg font-semibold transition whitespace-nowrap text-sm ${activeTab === 'company' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-100'}`}>🏢 Firma</button>
+  </div>
+</div>
+
+                {/* Company Info Tab */}
+                {activeTab === 'company' && (
+                  <div className="bg-white rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
+                    <h2 className="text-2xl font-bold mb-6">Podaci o Firmi</h2>
+                    
+                    <div className="mb-6">
+                      <label className="block font-semibold mb-2">Logo (PNG/JPG)</label>
+                      <div className="flex items-center gap-4">
+                        {companyInfo.logo && (
+                          <div className="w-24 h-24 border rounded-lg overflow-hidden bg-gray-100">
+                            <img src={companyInfo.logo} alt="Logo" className="w-full h-full object-contain" />
+                          </div>
+                        )}
+                        <label className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 cursor-pointer transition">
+                          Učitaj Logo
+                          <input type="file" accept="image/png,image/jpeg" onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = (event) => {
+                                setCompanyInfo({...companyInfo, logo: event.target.result});
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }} className="hidden" />
+                        </label>
+                        {companyInfo.logo && (
+                          <button onClick={() => setCompanyInfo({...companyInfo, logo: ''})} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition">
+                            Ukloni
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <label className="block font-semibold mb-2 text-sm">Naziv Kompanije *</label>
+                        <input type="text" value={companyInfo.name} onChange={(e) => setCompanyInfo({...companyInfo, name: e.target.value})} className="w-full border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                      </div>
+                      <div>
+                        <label className="block font-semibold mb-2 text-sm">PIB *</label>
+                        <input type="text" value={companyInfo.pib} onChange={(e) => setCompanyInfo({...companyInfo, pib: e.target.value})} className="w-full border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                      </div>
+                      <div>
+                        <label className="block font-semibold mb-2 text-sm">Email</label>
+                        <input type="email" value={companyInfo.email} onChange={(e) => setCompanyInfo({...companyInfo, email: e.target.value})} className="w-full border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                      </div>
+                      <div>
+                        <label className="block font-semibold mb-2 text-sm">Telefon</label>
+                        <input type="tel" value={companyInfo.phone} onChange={(e) => setCompanyInfo({...companyInfo, phone: e.target.value})} className="w-full border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                      </div>
+                      <div>
+                        <label className="block font-semibold mb-2 text-sm">Adresa</label>
+                        <input type="text" value={companyInfo.address} onChange={(e) => setCompanyInfo({...companyInfo, address: e.target.value})} className="w-full border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                      </div>
+                      <div>
+                        <label className="block font-semibold mb-2 text-sm">Grad</label>
+                        <input type="text" value={companyInfo.city} onChange={(e) => setCompanyInfo({...companyInfo, city: e.target.value})} className="w-full border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                      </div>
+                      <div>
+                        <label className="block font-semibold mb-2 text-sm">Vebsajt</label>
+                        <input type="text" value={companyInfo.website} onChange={(e) => setCompanyInfo({...companyInfo, website: e.target.value})} className="w-full border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                      </div>
+                      <div>
+                        <label className="block font-semibold mb-2 text-sm">Bankovni Račun</label>
+                        <input type="text" value={companyInfo.bankAccount} onChange={(e) => setCompanyInfo({...companyInfo, bankAccount: e.target.value})} className="w-full border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                      </div>
+                    </div>
+
+                    <div className="mb-6">
+                      <label className="block font-semibold mb-2 text-sm">Napomena za Dokumente</label>
+                      <textarea value={companyInfo.notes} onChange={(e) => setCompanyInfo({...companyInfo, notes: e.target.value})} placeholder="Npr: Uslovi plaćanja, rok isporuke..." rows="4" className="w-full border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                    </div>
+
+                    <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+                      <p className="text-sm text-blue-900">Ovi podaci će se automatski prikazati na svim ponudama i fakturama koje kreirate.</p>
+                    </div>
+
+                    <button onClick={() => alert('Podaci o firmi su sačuvani!')} className="w-full mt-6 bg-green-600 text-white py-2 rounded font-bold hover:bg-green-700 transition">
+                      Sačuvaj Podatke
+                    </button>
+                  </div>
+                )}
+
+                {/* Analytics Tab */}
+               {activeTab === 'analytics' && (() => {
+  const getDashboardStats = () => {
+    const today = new Date();
+    const thisMonth = today.getMonth();
+    const thisYear = today.getFullYear();
+    // reminderi
+    const dueReminders = getDueReminders();
+
+{dueReminders.length > 0 && (
+  <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded mb-6">
+    <p className="font-bold text-red-900">🔔 {dueReminders.length} Reminderi za ODMAH</p>
+    <p className="text-sm text-red-700 mt-1">Trebalo bi da proverim sa {dueReminders.map(r => r.clientName).join(', ')}</p>
+  </div>
+)}
+    // Sve ponude
+    const allOffers = offers.reduce((sum, o) => sum + o.totalAmount, 0);
+    const pendingOffers = offers.filter(o => o.status === 'pending').reduce((sum, o) => sum + o.totalAmount, 0);
+    
+    // Sve fakture
+    const allInvoices = invoices.reduce((sum, i) => sum + i.totalAmount, 0);
+    const paidInvoices = invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.totalAmount, 0);
+    const unpaidInvoices = invoices.filter(i => i.status !== 'paid').reduce((sum, i) => sum + i.totalAmount, 0);
+    
+    // Ovaj mesec
+    const thisMonthOffers = offers
+      .filter(o => {
+        const offerDate = new Date(o.createdDate);
+        return offerDate.getMonth() === thisMonth && offerDate.getFullYear() === thisYear;
+      })
+      .reduce((sum, o) => sum + o.totalAmount, 0);
+    
+    const thisMonthInvoices = invoices
+      .filter(i => {
+        const invDate = new Date(i.issueDate);
+        return invDate.getMonth() === thisMonth && invDate.getFullYear() === thisYear;
+      })
+      .reduce((sum, i) => sum + i.totalAmount, 0);
+    
+    // Po mesecima (poslednih 12 meseci)
+    const monthlyData = {};
+    for (let i = 11; i >= 0; i--) {
+      const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      const month = date.toLocaleDateString('sr-RS', { month: 'short', year: '2-digit' });
+      monthlyData[month] = { offers: 0, invoices: 0, paid: 0 };
+    }
+    
+    offers.forEach(o => {
+      const date = new Date(o.createdDate);
+      const month = date.toLocaleDateString('sr-RS', { month: 'short', year: '2-digit' });
+      if (monthlyData[month]) monthlyData[month].offers += o.totalAmount;
+    });
+    
+    invoices.forEach(i => {
+      const date = new Date(i.issueDate);
+      const month = date.toLocaleDateString('sr-RS', { month: 'short', year: '2-digit' });
+      if (monthlyData[month]) {
+        monthlyData[month].invoices += i.totalAmount;
+        if (i.status === 'paid') monthlyData[month].paid += i.totalAmount;
+      }
+    });
+    
+    // Top klijenti
+    const clientStats = clients.map(c => ({
+      name: c.name,
+      totalOffers: c.totalOffers,
+      totalValue: c.totalAmount,
+      offersCreated: offers.filter(o => o.clientId === c.id).length
+    })).sort((a, b) => b.totalValue - a.totalValue).slice(0, 5);
+    
+    // Dospele fakture
+    const today_date = new Date();
+    const overdueInvoices = invoices.filter(i => {
+      if (i.status === 'paid') return false;
+      if (!i.dueDate) return false;
+      return new Date(i.dueDate) < today_date;
+    }).length;
+    
+    // Stare ponude (starije od 30 dana)
+    const oldOffers = offers.filter(o => {
+      if (o.status !== 'pending') return false;
+      const createdDate = new Date(o.createdDate);
+      const daysOld = Math.floor((today - createdDate) / (1000 * 60 * 60 * 24));
+      return daysOld > 30;
+    }).length;
+    
+    return {
+      allOffers,
+      pendingOffers,
+      allInvoices,
+      paidInvoices,
+      unpaidInvoices,
+      thisMonthOffers,
+      thisMonthInvoices,
+      monthlyData: Object.entries(monthlyData),
+      clientStats,
+      overdueInvoices,
+      oldOffers
+    };
+  };
+  
+  const stats = getDashboardStats();
+  
+  return (
+    <div className="space-y-6">
+      {/* RED 1: GLAVNE METRIKE */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Ponude */}
+        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 text-white">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-blue-100 text-sm">Ukupne Ponude</p>
+              <p className="text-3xl font-bold mt-2">{stats.allOffers.toFixed(2)}</p>
+              <p className="text-xs text-blue-200 mt-2">({offers.length} ponuda)</p>
+            </div>
+          </div>
+          <div className="mt-4 pt-4 border-t border-blue-400">
+            <p className="text-xs">Ovaj mesec: <span className="font-bold">{stats.thisMonthOffers.toFixed(2)}</span></p>
+          </div>
+        </div>
+
+        {/* Fakture */}
+        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg p-6 text-white">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-green-100 text-sm">Izdate Fakture</p>
+              <p className="text-3xl font-bold mt-2">{stats.allInvoices.toFixed(2)}</p>
+              <p className="text-xs text-green-200 mt-2">({invoices.length} faktura)</p>
+            </div>
+          </div>
+          <div className="mt-4 pt-4 border-t border-green-400">
+            <p className="text-xs">Ovaj mesec: <span className="font-bold">{stats.thisMonthInvoices.toFixed(2)}</span></p>
+          </div>
+        </div>
+
+        {/* Plaćeno */}
+        <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg p-6 text-white">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-purple-100 text-sm">Naplaćeno</p>
+              <p className="text-3xl font-bold mt-2">{stats.paidInvoices.toFixed(2)}</p>
+              <p className="text-xs text-purple-200 mt-2">{invoices.filter(i => i.status === 'paid').length} plaćenih</p>
+            </div>
+          </div>
+          <div className="mt-4 pt-4 border-t border-purple-400">
+            <p className="text-xs">Procenat: <span className="font-bold">{stats.allInvoices > 0 ? ((stats.paidInvoices / stats.allInvoices) * 100).toFixed(0) : 0}%</span></p>
+          </div>
+        </div>
+
+        {/* Neplaćeno */}
+        <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-lg shadow-lg p-6 text-white">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-red-100 text-sm">Neplaćeno</p>
+              <p className="text-3xl font-bold mt-2">{stats.unpaidInvoices.toFixed(2)}</p>
+              <p className="text-xs text-red-200 mt-2">{invoices.filter(i => i.status !== 'paid').length} otvorenih</p>
+            </div>
+          </div>
+          {stats.overdueInvoices > 0 && (
+            <div className="mt-4 pt-4 border-t border-red-400">
+              <p className="text-xs font-bold">⚠️ Dospelo: {stats.overdueInvoices}</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* UPOZORENJA */}
+      {(stats.overdueInvoices > 0 || stats.oldOffers > 0) && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {stats.overdueInvoices > 0 && (
+            <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+              <p className="font-bold text-red-900">⚠️ {stats.overdueInvoices} Dospele Fakture</p>
+              <p className="text-sm text-red-700 mt-1">Fakture čiji rok plaćanja je prošao</p>
+            </div>
+          )}
+          {stats.oldOffers > 0 && (
+            <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
+              <p className="font-bold text-yellow-900">⏰ {stats.oldOffers} Starih Ponuda</p>
+              <p className="text-sm text-yellow-700 mt-1">Ponude starije od 30 dana čekaju na odgovor</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* RED 2: GRAFIKON I TOP KLIJENTI */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* GRAFIKON */}
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h3 className="text-xl font-bold mb-4">Prihodi Po Mesecima</h3>
+          <div className="space-y-4">
+            {stats.monthlyData.map(([month, data]) => {
+              const maxValue = Math.max(...stats.monthlyData.map(([_, d]) => d.offers + d.invoices)) || 1000;
+              const offersWidth = (data.offers / maxValue) * 100;
+              const invoicesWidth = (data.invoices / maxValue) * 100;
+              
+              return (
+                <div key={month}>
+                  <div className="flex justify-between items-center mb-1">
+                    <p className="text-sm font-semibold">{month}</p>
+                    <p className="text-xs text-gray-600">{(data.offers + data.invoices).toFixed(0)}</p>
+                  </div>
+                  <div className="flex gap-1 h-6 bg-gray-100 rounded overflow-hidden">
+                    {data.offers > 0 && (
+                      <div 
+                        style={{width: offersWidth + '%'}} 
+                        className="bg-blue-500 hover:bg-blue-600 transition"
+                        title={`Ponude: ${data.offers.toFixed(0)}`}
+                      ></div>
+                    )}
+                    {data.invoices > 0 && (
+                      <div 
+                        style={{width: invoicesWidth + '%'}} 
+                        className="bg-green-500 hover:bg-green-600 transition"
+                        title={`Fakture: ${data.invoices.toFixed(0)}`}
+                      ></div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-6 pt-4 border-t flex gap-6 text-xs">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-blue-500 rounded"></div>
+              <span>Ponude</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-green-500 rounded"></div>
+              <span>Fakture</span>
+            </div>
+          </div>
+        </div>
+
+        {/* TOP KLIJENTI */}
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h3 className="text-xl font-bold mb-4">🏆 Top 5 Klijenti</h3>
+          {stats.clientStats.length === 0 ? (
+            <p className="text-gray-500 text-center py-8">Nema podataka</p>
+          ) : (
+            <div className="space-y-3">
+              {stats.clientStats.map((client, idx) => (
+                <div key={idx} className="p-3 bg-gray-50 rounded-lg border-l-4 border-indigo-500">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg font-bold text-indigo-600">#{idx + 1}</span>
+                        <p className="font-bold text-gray-800">{client.name}</p>
+                      </div>
+                      <p className="text-xs text-gray-600 mt-1">{client.offersCreated} ponuda kreirano</p>
+                    </div>
+                    <p className="text-lg font-bold text-green-600">{client.totalValue.toFixed(2)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* RED 3: DETALJNA STATISTIKA */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Aktivnost */}
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h3 className="text-lg font-bold mb-4">📊 Aktivnost</h3>
+          <div className="space-y-3">
+            <div className="flex justify-between p-2 bg-blue-50 rounded">
+              <span className="text-sm">Ukupno Klijentata</span>
+              <span className="font-bold text-blue-600">{clients.length}</span>
+            </div>
+            <div className="flex justify-between p-2 bg-green-50 rounded">
+              <span className="text-sm">Ponuda u Toku</span>
+              <span className="font-bold text-green-600">{offers.filter(o => o.status === 'pending').length}</span>
+            </div>
+            <div className="flex justify-between p-2 bg-purple-50 rounded">
+              <span className="text-sm">Projekti</span>
+              <span className="font-bold text-purple-600">{projects.length}</span>
+            </div>
+            <div className="flex justify-between p-2 bg-orange-50 rounded">
+              <span className="text-sm">Prosečna Vrednost Ponude</span>
+              <span className="font-bold text-orange-600">{offers.length > 0 ? (stats.allOffers / offers.length).toFixed(2) : 0}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Konverzija */}
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h3 className="text-lg font-bold mb-4">📈 Konverzija</h3>
+          <div className="space-y-3">
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span>Ponude → Fakture</span>
+                <span className="font-bold">{offers.length > 0 ? ((invoices.length / offers.length) * 100).toFixed(0) : 0}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className="bg-blue-500 h-2 rounded-full" 
+                  style={{width: offers.length > 0 ? `${Math.min((invoices.length / offers.length) * 100, 100)}%` : 0}}
+                ></div>
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span>Fakture → Plaćanje</span>
+                <span className="font-bold">{invoices.length > 0 ? ((invoices.filter(i => i.status === 'paid').length / invoices.length) * 100).toFixed(0) : 0}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className="bg-green-500 h-2 rounded-full" 
+                  style={{width: invoices.length > 0 ? `${Math.min((invoices.filter(i => i.status === 'paid').length / invoices.length) * 100, 100)}%` : 0}}
+                ></div>
+              </div>
+            </div>
+            <div className="mt-4 pt-4 border-t">
+              <p className="text-xs text-gray-600">Ukupna vrednost</p>
+              <p className="text-2xl font-bold text-indigo-600">{(stats.allOffers + stats.allInvoices).toFixed(2)}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Status Faktura */}
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h3 className="text-lg font-bold mb-4">💳 Status Faktura</h3>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-2 bg-green-50 rounded">
+              <span className="text-sm">Plaćene</span>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-green-500 text-white rounded flex items-center justify-center text-xs font-bold">
+                  {invoices.filter(i => i.status === 'paid').length}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center justify-between p-2 bg-yellow-50 rounded">
+              <span className="text-sm">Izidate</span>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-yellow-500 text-white rounded flex items-center justify-center text-xs font-bold">
+                  {invoices.filter(i => i.status === 'issued').length}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center justify-between p-2 bg-red-50 rounded">
+              <span className="text-sm">Dospele</span>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-red-500 text-white rounded flex items-center justify-center text-xs font-bold">
+                  {invoices.filter(i => i.status === 'overdue').length}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+})()}
+                {/* CRM Tab */}
+                {activeTab === 'crm' && (
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="lg:col-span-1 bg-white rounded-lg shadow-lg p-6">
+                      <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-bold">Klijenti</h2>
+                        <button onClick={() => { setShowClientForm(true); setEditingClient(null); setClientForm({ name: '', pib: '', email: '', phone: '', address: '', city: '', notes: '' }); }} className="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700 transition"><Plus size={18} /></button>
+                      </div>
+
+                      <div className="mb-4 relative">
+                        <Search size={18} className="absolute left-3 top-3 text-gray-400" />
+                        <input type="text" placeholder="Pretraži..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-indigo-500"/>
+                      </div>
+
+                      {filteredClients.length === 0 ? (
+                        <p className="text-gray-500 text-center py-4">Nema klijenata</p>
+                      ) : (
+                        <div className="space-y-2 max-h-96 overflow-y-auto">
+                          {filteredClients.map(client => (
+                            <div key={client.id} onClick={() => setSelectedClient(client)} className={`p-3 rounded-lg cursor-pointer transition ${selectedClient?.id === client.id ? 'bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}>
+                              <p className="font-semibold text-sm">{client.name}</p>
+                              <p className="text-xs opacity-75">{client.email}</p>
+                              <p className="text-xs mt-1">{client.totalOffers} ponuda | {client.totalAmount.toFixed(0)}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="lg:col-span-2">
+                      {showClientForm ? (
+                        <div className="bg-white rounded-lg shadow-lg p-8">
+                          <h3 className="text-2xl font-bold mb-6">{editingClient ? 'Ažuriraj Klijenta' : 'Dodaj Novog Klijenta'}</h3>
+                          <div className="grid grid-cols-2 gap-4 mb-4">
+                            <input type="text" placeholder="Naziv Klijenta *" value={clientForm.name} onChange={(e) => setClientForm({...clientForm, name: e.target.value})} className="border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                            <input type="text" placeholder="PIB" value={clientForm.pib} onChange={(e) => setClientForm({...clientForm, pib: e.target.value})} className="border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                            <input type="email" placeholder="Email *" value={clientForm.email} onChange={(e) => setClientForm({...clientForm, email: e.target.value})} className="border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                            <input type="tel" placeholder="Telefon" value={clientForm.phone} onChange={(e) => setClientForm({...clientForm, phone: e.target.value})} className="border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                            <input type="text" placeholder="Adresa" value={clientForm.address} onChange={(e) => setClientForm({...clientForm, address: e.target.value})} className="border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                            <input type="text" placeholder="Grad" value={clientForm.city} onChange={(e) => setClientForm({...clientForm, city: e.target.value})} className="border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                          </div>
+                          <textarea placeholder="Napomene" value={clientForm.notes} onChange={(e) => setClientForm({...clientForm, notes: e.target.value})} className="w-full border rounded px-4 py-2 focus:outline-none focus:border-indigo-500 mb-4" rows="3"/>
+                          <div className="flex gap-3">
+                            <button onClick={() => { setShowClientForm(false); setEditingClient(null); }} className="flex-1 bg-gray-400 text-white py-2 rounded hover:bg-gray-500 transition">Otkaži</button>
+                            <button onClick={editingClient ? updateClient : addClient} className="flex-1 bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition">{editingClient ? 'Ažuriraj' : 'Dodaj'}</button>
+                          </div>
+                        </div>
+                      ) : selectedClient ? (
+                        <div className="bg-white rounded-lg shadow-lg p-8">
+                          <div className="flex justify-between items-start mb-6">
+                            <div>
+                              <h2 className="text-3xl font-bold">{selectedClient.name}</h2>
+                              <p className="text-gray-600">PIB: {selectedClient.pib || '-'}</p>
+                            </div>
+                            <div className="flex gap-2">
+                              <button onClick={() => { setEditingClient(selectedClient); setClientForm({ name: selectedClient.name, pib: selectedClient.pib, email: selectedClient.email, phone: selectedClient.phone, address: selectedClient.address, city: selectedClient.city, notes: selectedClient.notes }); setShowClientForm(true); }} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition flex items-center gap-2"><Edit size={18} /> Uredi</button>
+                              <button onClick={() => deleteClient(selectedClient.id)} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition flex items-center gap-2"><Trash2 size={18} /> Obriši</button>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
+                            <div><p className="text-sm text-gray-600">Email</p><p className="font-semibold">{selectedClient.email}</p></div>
+                            <div><p className="text-sm text-gray-600">Telefon</p><p className="font-semibold">{selectedClient.phone || '-'}</p></div>
+                            <div><p className="text-sm text-gray-600">Adresa</p><p className="font-semibold">{selectedClient.address || '-'}</p></div>
+                            <div><p className="text-sm text-gray-600">Grad</p><p className="font-semibold">{selectedClient.city || '-'}</p></div>
+                          </div>
+
+                          <div className="grid grid-cols-3 gap-4 mb-6">
+                            <div className="bg-blue-50 p-4 rounded-lg text-center"><p className="text-2xl font-bold text-blue-600">{selectedClient.totalOffers}</p><p className="text-sm text-gray-600">Ponuda</p></div>
+                            <div className="bg-green-50 p-4 rounded-lg text-center"><p className="text-2xl font-bold text-green-600">{selectedClient.totalAmount.toFixed(0)}</p><p className="text-sm text-gray-600">Vrednost</p></div>
+                            <div className="bg-purple-50 p-4 rounded-lg text-center"><p className="text-2xl font-bold text-purple-600">{selectedClient.history.length}</p><p className="text-sm text-gray-600">Aktivnosti</p></div>
+                          </div>
+
+                          {selectedClient.notes && (
+                            <div className="mb-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded">
+                              <p className="text-sm font-semibold text-gray-700">Napomene:</p>
+                              <p className="text-gray-600">{selectedClient.notes}</p>
+                            </div>
+                          )}
+
+                          <div className="border-t-2 pt-6">
+                            <h3 className="text-xl font-bold mb-4">Istorija Komunikacije</h3>
+                            <div className="mb-4 flex gap-2">
+                              <input type="text" placeholder="Dodaj komentar..." value={newComment} onChange={(e) => setNewComment(e.target.value)} className="flex-1 border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                              <button onClick={addCommentToClient} className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"><MessageSquare size={18} /></button>
+                            </div>
+
+                            <div className="space-y-3 max-h-96 overflow-y-auto">
+                              {selectedClient.history && selectedClient.history.length === 0 ? (
+                                <p className="text-gray-500 text-center py-4">Nema aktivnosti</p>
+                              ) : (
+                                selectedClient.history.map((item, idx) => (
+                                  <div key={idx} className={`p-3 rounded-lg border-l-4 ${item.type === 'offer' ? 'bg-blue-50 border-blue-400' : 'bg-purple-50 border-purple-400'}`}>
+                                    <div className="flex justify-between items-start">
+                                      <div>
+                                        <p className="font-semibold text-sm">{item.type === 'offer' ? '📊 Ponuda' : '💬 Komentar'}</p>
+                                        {item.type === 'offer' ? (<><p className="text-sm">{item.title}</p><p className="text-sm font-bold text-green-600">{item.amount.toFixed(2)}</p></>) : (<p className="text-sm">{item.text}</p>)}
+                                      </div>
+                                      <p className="text-xs text-gray-500">{item.date}</p>
+                                    </div>
+                                  </div>
+                                ))
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="bg-white rounded-lg shadow-lg p-12 text-center">
+                          <Users size={48} className="mx-auto text-gray-400 mb-4" />
+                          <p className="text-gray-500">Izaberi klijenta ili kreiraj novog</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Offers Tab */}
+                {activeTab === 'offers' && (
+                  <div className="bg-white rounded-lg shadow-lg p-6">
+                    <div className="flex justify-between items-center mb-6">
+                      <h2 className="text-2xl font-bold">Sve Ponude</h2>
+                      <button onClick={() => setActiveTab('create')} className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition flex items-center gap-2"><Plus size={18} /> Nova Ponuda</button>
+                    </div>
+                    {offers.length === 0 ? (
+                      <p className="text-gray-500 text-center py-8">Nema ponuda</p>
+                    ) : (
+                      <div className="space-y-4">
+                        {offers.map(offer => (
+                          <div key={offer.id} className="border rounded-lg p-6 hover:shadow-lg transition">
+                            <div className="flex justify-between items-start mb-4">
+                              <div>
+                                <h3 className="text-xl font-bold">{offer.title}</h3>
+                                <p className="text-gray-600">Klijent: <span className="font-semibold">{offer.clientName}</span></p>
+                                <p className="text-sm text-gray-500">{offer.createdDate}</p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-3xl font-bold text-green-600">{offer.totalAmount.toFixed(2)}</p>
+                              </div>
+                            </div>
+
+                            <div className="overflow-x-auto mb-4">
+                              <table className="w-full text-sm">
+                                <thead className="bg-gray-50">
+                                  <tr>
+                                    <th className="p-2 text-center w-16">Slika</th>
+                                    <th className="p-2 text-left">Proizvod</th>
+                                    <th className="p-2 text-center">Kom</th>
+                                    <th className="p-2 text-right">Cena</th>
+                                    <th className="p-2 text-center">Popust</th>
+                                    <th className="p-2 text-right">Ukupno</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {offer.items.map((item, idx) => {
+                                    const basePrice = item.quantity * item.price;
+                                    const discount = item.discount || 0;
+                                    const discountType = item.discountType || '%';
+                                    const discountAmount = discountType === '%' ? (basePrice * discount) / 100 : discount;
+                                    const finalPrice = basePrice - discountAmount;
+                                    return (
+                                      <tr key={idx} className="border-b hover:bg-gray-50">
+                                        <td className="p-2 text-center">{item.image ? <img src={item.image} className="w-12 h-12 object-contain border rounded mx-auto" alt={item.description} /> : <span className="text-gray-400 text-xs">-</span>}</td>
+                                        <td className="p-2 font-medium">{item.description}</td>
+                                        <td className="p-2 text-center">{item.quantity}</td>
+                                        <td className="p-2 text-right">{item.price.toFixed(2)}</td>
+                                        <td className="p-2 text-center">{discount > 0 ? <span className="text-red-600 font-semibold">-{discount}{discountType}</span> : <span className="text-gray-400">-</span>}</td>
+                                        <td className={`p-2 text-right font-bold ${discount > 0 ? 'text-green-600' : ''}`}>{finalPrice.toFixed(2)}</td>
+                                      </tr>
+                                    );
+                                  })}
+                                </tbody>
+                              </table>
+                            </div>
+
+                            <div className="flex gap-2 justify-end flex-wrap">
+                              <button onClick={() => {
+                                  let itemsHtml = '';
+                                  offer.items.forEach((item, idx) => {
+                                    const basePrice = item.quantity * item.price;
+                                    const discount = item.discount || 0;
+                                    const discountType = item.discountType || '%';
+                                    const discountAmount = discountType === '%' ? (basePrice * discount) / 100 : discount;
+                                    const finalPrice = basePrice - discountAmount;
+                                    const imgHtml = item.image ? '<img src="' + item.image + '" class="product-image" alt="">' : '-';
+                                    const discountHtml = discount > 0 ? '<strong style="color:red">-' + discount + discountType + '</strong>' : '-';
+                                    itemsHtml += '<tr><td>' + imgHtml + '</td><td>' + item.description + '</td><td style="text-align:right">' + item.quantity + '</td><td style="text-align:right">' + item.price.toFixed(2) + '</td><td style="text-align:center">' + discountHtml + '</td><td style="text-align:right"><strong>' + finalPrice.toFixed(2) + '</strong></td></tr>';
+                                  });
+
+                                  const discountRowHtml = offer.totalDiscount > 0 ? '<div class="total-row"><span>Ukupan popust:</span><strong style="color:red">-' + offer.totalDiscount.toFixed(2) + ' €</strong></div>' : '';
+                                  const noteHtml = offer.note ? '<div style="margin-top:20px;padding:15px;background:#FEF3C7;border-left:3px solid #FFD700;border-radius:3px"><strong>Napomena:</strong> ' + offer.note + '</div>' : '';
+                                  const logoHtml = companyInfo.logo ? '<img src="' + companyInfo.logo + '" style="max-height:80px" alt="Logo">' : '';
+                                  const companyNotesHtml = companyInfo.notes ? '<div style="margin-top:15px;padding:15px;background:#f0f0f0;border-radius:5px"><strong>Dodatne napomene:</strong> ' + companyInfo.notes + '</div>' : '';
+
+                                  const html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial;padding:40px;background:white}.container{max-width:900px;margin:0 auto;background:white;padding:30px;border:2px solid #4F46E5}.header{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #4F46E5;padding-bottom:20px;margin-bottom:30px}.header-left{flex:1}.header-right{text-align:right}.header h1{color:#4F46E5;font-size:32px;margin:0}.header p{color:#666;font-size:12px;margin:5px 0}.offer-info{display:grid;grid-template-columns:1fr 1fr;margin-bottom:30px;gap:20px}.info-section{padding:15px;background:#f8f8f8;border-radius:5px}.info-section p{margin:5px 0;font-size:12px}.info-section strong{display:block;margin-bottom:10px;color:#4F46E5}table{width:100%;border-collapse:collapse;margin:20px 0}th{background:#4F46E5;color:white;padding:12px;font-size:11px;text-align:left}td{border-bottom:1px solid #E5E7EB;padding:10px;font-size:11px}tr:nth-child(even){background:#f8f8f8}.product-image{max-width:80px;max-height:80px;object-fit:contain;border:1px solid #ccc;padding:2px;border-radius:3px}.totals{margin-top:20px}.total-row{display:grid;grid-template-columns:2fr 1fr;padding:10px 0;border-bottom:1px solid #E5E7EB}.total-row strong{text-align:right}.total-row.highlight{border-bottom:2px solid #4F46E5;border-top:2px solid #4F46E5;padding:15px 0;font-size:13px;background:#f0f0f0;font-weight:bold}.footer{margin-top:30px;border-top:1px solid #E5E7EB;padding-top:20px;text-align:center;color:#666;font-size:11px}</style></head><body><div class="container"><div class="header"><div class="header-left"><h1>PONUDA</h1><p>' + offer.title + '</p><p>Datum: ' + offer.createdDate + '</p></div><div class="header-right">' + logoHtml + '</div></div><div class="offer-info"><div class="info-section"><strong>Izdavač:</strong><p><strong>' + companyInfo.name + '</strong></p><p>PIB: ' + companyInfo.pib + '</p><p>' + companyInfo.address + ', ' + companyInfo.city + '</p><p>Email: ' + companyInfo.email + '</p><p>Telefon: ' + companyInfo.phone + '</p>' + (companyInfo.website ? '<p>Veb: ' + companyInfo.website + '</p>' : '') + '</div><div class="info-section"><strong>Primaoc Ponude:</strong><p><strong>' + offer.clientName + '</strong></p><p>Valjanost ponude: 30 dana</p></div></div><table><thead><tr><th>Slika</th><th>Opis stavke</th><th style="text-align:right">Količina</th><th style="text-align:right">Cena po komadu</th><th style="text-align:center">Popust</th><th style="text-align:right">Iznos (€)</th></tr></thead><tbody>' + itemsHtml + '</tbody></table><div class="totals"><div class="total-row"><span>Ukupno prije popusta:</span><strong>' + offer.subtotal.toFixed(2) + ' €</strong></div>' + discountRowHtml + '<div class="total-row highlight"><span>PONUĐENA CENA:</span><strong>' + offer.totalAmount.toFixed(2) + ' €</strong></div></div>' + noteHtml + companyNotesHtml + '<div class="footer"><p>Ova ponuda važi 30 dana od izdavanja. Datum štampanja: ' + new Date().toLocaleDateString('sr-RS') + '</p><p>Zahvaljujemo na povoljnom razmatranju!</p></div></div></body></html>';
+
+                                  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+                                  const url = URL.createObjectURL(blob);
+                                  const a = document.createElement('a');
+                                  a.href = url;
+                                  a.download = 'Ponuda_' + offer.title.replace(/\s+/g, '_') + '.html';
+                                  document.body.appendChild(a);
+                                  a.click();
+                                  document.body.removeChild(a);
+                                  URL.revokeObjectURL(url);
+                                  alert('Ponuda preuzeta! Otvori u browseru → Print → Save as PDF');
+                                }} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition flex items-center gap-2 text-sm"><Download size={16} /> HTML/PDF</button>
+                              <button onClick={() => { setSelectedOffer(offer); setShowInvoiceForm(true); }} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition flex items-center gap-2"><FileText size={16} /> Kreiraj Fakturu</button>
+                              <button onClick={() => createProjectFromOffer(offer)} className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition flex items-center gap-2"><Plus size={16} /> Kreiraj Projekat</button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Invoices Tab */}
+                {activeTab === 'invoices' && (
+                  <div className="bg-white rounded-lg shadow-lg p-6">
+                    <h2 className="text-2xl font-bold mb-6">Fakture</h2>
+                    {invoices.length === 0 ? (
+                      <p className="text-gray-500 text-center py-8">Nema faktura. Kreiraj fakturu iz ponude.</p>
+                    ) : (
+                      <div className="space-y-4">
+                        {invoices.map(invoice => (
+                          <div key={invoice.id} className="border rounded-lg p-6 hover:shadow-lg transition">
+                            <div className="flex justify-between items-start mb-4">
+                              <div>
+                                <h3 className="text-xl font-bold">{invoice.invoiceNumber}</h3>
+                                <p className="text-gray-600">{invoice.offerTitle}</p>
+                                <p className="text-gray-600">Klijent: <span className="font-semibold">{invoice.clientName}</span></p>
+                                <p className="text-sm text-gray-500">Datum: {invoice.issueDate} | Rok: {invoice.dueDate || 'Odmah'}</p>
+                                <p className="text-sm text-indigo-600 font-semibold">Valuta: {invoice.currency}</p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-3xl font-bold text-blue-600">{invoice.totalAmount.toFixed(2)} {getCurrencySymbol(invoice.currency)}</p>
+                                <div className="mt-2 flex gap-2 flex-col">
+                                  <select value={invoice.status} onChange={(e) => updateInvoiceStatus(invoice.id, e.target.value)} className={`px-3 py-1 rounded font-semibold text-sm ${invoice.status === 'paid' ? 'bg-green-100 text-green-800' : invoice.status === 'overdue' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                                    <option value="issued">Izdat</option>
+                                    <option value="paid">Plaćen</option>
+                                    <option value="overdue">Dospeo</option>
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-4 mb-4 p-3 bg-gray-50 rounded">
+                              <div><p className="text-xs text-gray-600">Bez PDV-a</p><p className="font-bold">{invoice.subtotal.toFixed(2)} {getCurrencySymbol(invoice.currency)}</p></div>
+                              <div><p className="text-xs text-gray-600">PDV ({invoice.vatRate}%)</p><p className="font-bold text-blue-600">{invoice.vatAmount.toFixed(2)} {getCurrencySymbol(invoice.currency)}</p></div>
+                              <div><p className="text-xs text-gray-600">Stavki</p><p className="font-bold">{invoice.items.length}</p></div>
+                            </div>
+
+                            <div className="flex gap-2 justify-end flex-wrap">
+                              <button onClick={() => exportInvoiceHTML(invoice)} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition flex items-center gap-2 text-sm"><Download size={16} /> HTML/PDF</button>
+                              <button onClick={() => exportInvoiceExcel(invoice)} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition flex items-center gap-2 text-sm"><Download size={16} /> Excel</button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Create Standalone Invoice Tab */}
+                {activeTab === 'create-invoice' && (
+                  <div className="bg-white rounded-lg shadow-lg p-8">
+                    <h2 className="text-2xl font-bold mb-6">Kreiraj Novu Fakturu</h2>
+                    
+                    {clients.length === 0 ? (
+                      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded">
+                        <p className="font-semibold text-yellow-900">Prvo dodaj klijente!</p>
+                        <p className="text-sm text-yellow-700">Idi na "Klijenti" tab i dodaj klijente.</p>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="grid grid-cols-2 gap-4 mb-6">
+                          <div>
+                            <label className="block font-semibold mb-2 text-sm">Klijent *</label>
+                            <select value={standaloneInvoiceForm.clientId} onChange={(e) => setStandaloneInvoiceForm({...standaloneInvoiceForm, clientId: e.target.value})} className="w-full border rounded px-4 py-2">
+                              <option value="">-- Odaberi Klijenta --</option>
+                              {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block font-semibold mb-2 text-sm">Valuta</label>
+                            <select value={standaloneInvoiceForm.currency} onChange={(e) => setStandaloneInvoiceForm({...standaloneInvoiceForm, currency: e.target.value})} className="w-full border rounded px-4 py-2">
+                              <option value="EUR">EUR (€)</option>
+                              <option value="RSD">RSD (дин.)</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block font-semibold mb-2 text-sm">Broj Fakture</label>
+                            <input type="text" placeholder={generateInvoiceNumber()} value={standaloneInvoiceForm.invoiceNumber} onChange={(e) => setStandaloneInvoiceForm({...standaloneInvoiceForm, invoiceNumber: e.target.value})} className="w-full border rounded px-4 py-2"/>
+                          </div>
+                          <div>
+                            <label className="block font-semibold mb-2 text-sm">Datum Izdavanja</label>
+                            <input type="date" value={standaloneInvoiceForm.issueDate} onChange={(e) => setStandaloneInvoiceForm({...standaloneInvoiceForm, issueDate: e.target.value})} className="w-full border rounded px-4 py-2"/>
+                          </div>
+                          <div>
+                            <label className="block font-semibold mb-2 text-sm">Rok Plaćanja</label>
+                            <input type="date" value={standaloneInvoiceForm.dueDate} onChange={(e) => setStandaloneInvoiceForm({...standaloneInvoiceForm, dueDate: e.target.value})} className="w-full border rounded px-4 py-2"/>
+                          </div>
+                          <div>
+                            <label className="block font-semibold mb-2 text-sm">Stopa PDV-a (%)</label>
+                            <input type="number" min="0" max="100" value={standaloneInvoiceForm.vatRate} onChange={(e) => setStandaloneInvoiceForm({...standaloneInvoiceForm, vatRate: parseFloat(e.target.value) || 0})} className="w-full border rounded px-4 py-2"/>
+                          </div>
+                          <div>
+                            <label className="block font-semibold mb-2 text-sm">Status</label>
+                            <select value={standaloneInvoiceForm.status} onChange={(e) => setStandaloneInvoiceForm({...standaloneInvoiceForm, status: e.target.value})} className="w-full border rounded px-4 py-2">
+                              <option value="issued">Izdat</option>
+                              <option value="paid">Plaćen</option>
+                              <option value="overdue">Dospeo</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="mb-6">
+                          <label className="block font-semibold mb-2 text-sm">Uslovi Plaćanja</label>
+                          <input type="text" placeholder="Npr: Transfer, Gotovina, Ček" value={standaloneInvoiceForm.paymentTerms} onChange={(e) => setStandaloneInvoiceForm({...standaloneInvoiceForm, paymentTerms: e.target.value})} className="w-full border rounded px-4 py-2 mb-4"/>
+                          <label className="block font-semibold mb-2 text-sm">Napomena</label>
+                          <textarea placeholder="Napomene na fakturu..." value={standaloneInvoiceForm.notes} onChange={(e) => setStandaloneInvoiceForm({...standaloneInvoiceForm, notes: e.target.value})} rows="3" className="w-full border rounded px-4 py-2"/>
+                        </div>
+
+                        <div className="bg-blue-50 p-6 rounded-lg mb-6">
+                          <h3 className="text-lg font-bold mb-4">Dodaj Stavke</h3>
+                          <div className="grid grid-cols-2 gap-4 mb-4">
+                            <input type="text" placeholder="Opis stavke *" value={newInvoiceItem.description} onChange={(e) => setNewInvoiceItem({...newInvoiceItem, description: e.target.value})} className="border rounded px-4 py-2"/>
+                            <input type="number" min="1" placeholder="Količina" value={newInvoiceItem.quantity} onChange={(e) => setNewInvoiceItem({...newInvoiceItem, quantity: parseInt(e.target.value) || 1})} className="border rounded px-4 py-2"/>
+                            <input type="number" step="0.01" min="0" placeholder={`Cena ${getCurrencySymbol(standaloneInvoiceForm.currency)}`} value={newInvoiceItem.price} onChange={(e) => setNewInvoiceItem({...newInvoiceItem, price: parseFloat(e.target.value) || 0})} className="border rounded px-4 py-2"/>
+                            <div className="flex gap-2">
+                              <input type="number" step="0.1" min="0" placeholder="Popust" value={newInvoiceItem.discount} onChange={(e) => setNewInvoiceItem({...newInvoiceItem, discount: parseFloat(e.target.value) || 0})} className="flex-1 border rounded px-4 py-2"/>
+                              <select value={newInvoiceItem.discountType} onChange={(e) => setNewInvoiceItem({...newInvoiceItem, discountType: e.target.value})} className="w-16 border rounded px-2 py-2">
+                                <option value="%">%</option>
+                                <option value={getCurrencySymbol(standaloneInvoiceForm.currency)}>{getCurrencySymbol(standaloneInvoiceForm.currency)}</option>
+                              </select>
+                            </div>
+                          </div>
+                          <button onClick={addItemToStandaloneInvoice} className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition w-full"><Plus size={18} /> Dodaj Stavku</button>
+                        </div>
+
+                        <div className="bg-gray-50 p-4 rounded-lg mb-6 max-h-80 overflow-y-auto border-2 border-gray-200">
+                          <p className="font-bold mb-3">Stavke ({standaloneInvoiceItems.length}):</p>
+                          {standaloneInvoiceItems.length === 0 ? (
+                            <p className="text-gray-500 text-center py-4">Nema stavki</p>
+                          ) : (
+                            <div className="space-y-2">
+                              {standaloneInvoiceItems.map((item, idx) => {
+                                const basePrice = item.quantity * item.price;
+                                const discount = item.discount || 0;
+                                const discountType = item.discountType || '%';
+                                const discountAmount = discountType === '%' ? (basePrice * discount) / 100 : discount;
+                                const finalPrice = basePrice - discountAmount;
+                                
+                                return (
+                                  <div key={item.id} className="flex justify-between items-center p-3 bg-white rounded border">
+                                    <div className="flex-1">
+                                      <p className="font-semibold text-sm">{item.description}</p>
+                                      <p className="text-xs text-gray-600">{item.quantity}x {item.price.toFixed(2)} = <strong>{finalPrice.toFixed(2)}</strong></p>
+                                    </div>
+                                    <button onClick={() => removeItemFromStandaloneInvoice(item.id)} className="text-red-500 hover:text-red-700"><Trash2 size={18} /></button>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="bg-gradient-to-r from-indigo-100 to-purple-100 p-6 rounded-lg mb-6 border-2 border-indigo-300 text-center">
+                          <p className="text-sm text-gray-600">Ukupno bez PDV:</p>
+                          <p className="text-2xl font-bold text-blue-600 mb-2">
+                            {standaloneInvoiceItems.reduce((sum, item) => {
+                              const basePrice = item.quantity * item.price;
+                              const discount = item.discount || 0;
+                              const discountType = item.discountType || '%';
+                              const discountAmount = discountType === '%' ? (basePrice * discount) / 100 : discount;
+                              return sum + (basePrice - discountAmount);
+                            }, 0).toFixed(2)} {getCurrencySymbol(standaloneInvoiceForm.currency)}
+                          </p>
+                          <p className="text-sm text-gray-600">PDV ({standaloneInvoiceForm.vatRate}%):</p>
+                          <p className="text-lg font-bold text-green-600">
+                            {(standaloneInvoiceItems.reduce((sum, item) => {
+                              const basePrice = item.quantity * item.price;
+                              const discount = item.discount || 0;
+                              const discountType = item.discountType || '%';
+                              const discountAmount = discountType === '%' ? (basePrice * discount) / 100 : discount;
+                              return sum + (basePrice - discountAmount);
+                            }, 0) * standaloneInvoiceForm.vatRate / 100).toFixed(2)} {getCurrencySymbol(standaloneInvoiceForm.currency)}
+                          </p>
+                        </div>
+
+                        <div className="flex gap-3">
+                          <button onClick={() => { setStandaloneInvoiceItems([]); setStandaloneInvoiceForm({clientId: '', invoiceNumber: '', issueDate: new Date().toISOString().split('T')[0], dueDate: '', vatRate: 20, paymentTerms: '', notes: '', status: 'issued', currency: 'EUR'}); setActiveTab('invoices'); }} className="flex-1 bg-gray-400 text-white py-2 rounded hover:bg-gray-500">Otkaži</button>
+                          <button onClick={createStandaloneInvoice} className="flex-1 bg-green-600 text-white py-2 rounded font-bold hover:bg-green-700">Kreiraj Fakturu</button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Create Offer Tab */}
+                {activeTab === 'create' && (
+                  <div className="bg-white rounded-lg shadow-lg p-8">
+                    <h2 className="text-2xl font-bold mb-6">Kreiraj Novu Ponudu</h2>
+                    
+                    {!selectedClient && (
+                      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded">
+                        <p className="font-semibold text-yellow-900">Prvo izaberi klijenta!</p>
+                        <p className="text-sm text-yellow-700">Idi na "Klijenti" tab i izaberi klijenta za kog praviš ponudu.</p>
+                      </div>
+                    )}
+
+                    {selectedClient && (
+                      <div>
+                        <div className="bg-indigo-50 p-4 rounded-lg mb-6">
+                          <p className="text-sm text-gray-600">Kreiram ponudu za:</p>
+                          <p className="text-xl font-bold text-indigo-600">{selectedClient.name}</p>
+                        </div>
+
+                        {formData.parseStep === 'upload' && (
+                          <div>
+                            <div className="mb-8 p-12 border-4 border-dashed border-purple-400 rounded-xl bg-gradient-to-br from-purple-50 to-indigo-50 text-center hover:scale-105 transition-transform">
+                              <label className="flex flex-col items-center gap-4 cursor-pointer">
+                                <FileJson size={64} />
+                                <div>
+                                  <p className="font-bold text-purple-900 text-2xl mb-2">Učitaj JSON Fajl</p>
+                                  <p className="text-purple-700">Python script → JSON sa slikama</p>
+                                </div>
+                                <input type="file" accept=".json" onChange={(e) => {
+                                    const file = e.target.files[0];
+                                    if (!file) return;
+                                    const reader = new FileReader();
+                                    reader.onload = (event) => {
+                                      try {
+                                        const jsonData = JSON.parse(event.target.result);
+                                        if (jsonData && jsonData.length > 0) {
+                                          const firstSheet = jsonData[0];
+                                          const cleanHeaders = firstSheet.headers.map(h => String(h || '').trim());
+                                          const imgs = firstSheet.rows.filter(r => r.image).map(r => r.image);
+                                          setFormData(prev => ({
+                                            ...prev,
+                                            allSheetsData: jsonData,
+                                            selectedSheet: firstSheet.sheet_name,
+                                            headers: cleanHeaders,
+                                            sheetData: firstSheet.rows,
+                                            extractedImages: imgs,
+                                            parseStep: 'mapping'
+                                          }));
+                                          alert(`Učitano:\n- ${jsonData.length} sheet(a)\n- ${firstSheet.total_rows} proizvoda\n- ${imgs.length} slika`);
+                                        }
+                                      } catch (error) {
+                                        alert('Greška pri čitanju JSON fajla:\n' + error.message);
+                                      }
+                                    };
+                                    reader.readAsText(file);
+                                  }} className="hidden" />
+                              </label>
+                            </div>
+
+                            {formData.extractedImages.length > 0 && (
+                              <div className="p-4 bg-green-50 rounded-lg">
+                                <h3 className="font-bold mb-3">✓ {formData.extractedImages.length} slika</h3>
+                                <div className="grid grid-cols-6 gap-3">
+                                  {formData.extractedImages.slice(0, 12).map((img, i) => <img key={i} src={img} className="w-full h-20 object-contain border rounded" alt="" />)}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {formData.parseStep === 'mapping' && formData.allSheetsData && (
+                          <div className="p-6 bg-yellow-50 rounded-lg">
+                            <h3 className="font-bold mb-4">Mapiranje Kolona</h3>
+                            {formData.allSheetsData.length > 1 && (
+                              <div className="mb-6 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                                <p className="font-semibold mb-3">Dostupni Sheetovi:</p>
+                                <div className="flex gap-2 flex-wrap">
+                                  {formData.allSheetsData.map(s => (
+                                    <button key={s.sheet_name} onClick={() => {
+                                        const sheet = s;
+                                        const cleanHeaders = sheet.headers.map(h => String(h || '').trim());
+                                        const imgs = sheet.rows.filter(r => r.image).map(r => r.image);
+                                        setFormData(prev => ({
+                                          ...prev,
+                                          selectedSheet: sheet.sheet_name,
+                                          headers: cleanHeaders,
+                                          sheetData: sheet.rows,
+                                          extractedImages: imgs,
+                                          columnMapping: { description: '', price: '', quantity: '', dimensions: '', weight: '', volume: '' }
+                                        }));
+                                      }} className={`px-4 py-2 rounded font-semibold transition-all ${formData.selectedSheet === s.sheet_name ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white text-indigo-600 border-2 border-indigo-200'}`}>
+                                      {s.sheet_name} ({s.total_rows} redova)
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            <div className="mb-6 p-4 bg-white rounded border">
+                              <p className="font-semibold mb-3">Dostupne kolone:</p>
+                              <div className="flex gap-2 flex-wrap">
+                                {formData.headers.map((h, i) => (
+                                  <span key={i} className="px-3 py-1 bg-blue-100 text-blue-800 rounded text-sm">[{i}] {h || '(prazna)'}</span>
+                                ))}
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-3 gap-4 mb-6">
+                              {['description', 'price', 'quantity', 'dimensions', 'weight', 'volume'].map(f => (
+                                <div key={f}>
+                                  <label className="block font-semibold mb-2 text-sm text-gray-800">
+                                    {f === 'description' ? 'Opis *' : f === 'price' ? 'Cena *' : f === 'quantity' ? 'Količina' : f === 'dimensions' ? 'Dimenzije' : f === 'weight' ? 'Težina (Kg)' : 'Zapremina (m³)'}
+                                  </label>
+                                  <select value={formData.columnMapping[f]} onChange={(e) => setFormData({...formData, columnMapping: {...formData.columnMapping, [f]: e.target.value}})} className="w-full border-2 rounded px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none">
+                                    <option value="">-- Odaberi --</option>
+                                    {formData.headers.map((h, i) => <option key={i} value={i}>{h || `Kolona ${i}`}</option>)}
+                                  </select>
+                                </div>
+                              ))}
+                            </div>
+                            <div className="flex gap-3">
+                              <button onClick={() => setFormData({...formData, parseStep: 'upload'})} className="flex-1 bg-gray-400 text-white py-2 rounded">Nazad</button>
+                              <button onClick={() => {
+                                  if (formData.columnMapping.description && formData.columnMapping.price !== '') {
+                                    setFormData({...formData, parseStep: 'preview'});
+                                  } else {
+                                    alert('Mapiraj Opis i Cenu!');
+                                  }
+                                }} className="flex-1 bg-indigo-600 text-white py-2 rounded">Pregled</button>
+                            </div>
+                          </div>
+                        )}
+
+                        {formData.parseStep === 'preview' && (
+                          <div className="p-6 bg-green-50 rounded-lg">
+                            <h3 className="font-bold mb-4">Pregled Proizvoda</h3>
+                            <div className="bg-white rounded p-4 mb-4 max-h-96 overflow-auto">
+                              <table className="w-full text-sm">
+                                <thead><tr><th className="p-2">Slika</th><th className="p-2">Proizvod</th><th className="p-2">Kom</th><th className="p-2">Cena</th></tr></thead>
+                                <tbody>
+                                  {formData.sheetData
+                                    .filter(row => row.data[formData.columnMapping.description])
+                                    .slice(0, 10)
+                                    .map((row, i) => (
+                                      <tr key={i}>
+                                        <td className="p-2">{row.image ? <img src={row.image} className="w-12 h-12 object-contain border rounded" alt="" /> : '-'}</td>
+                                        <td className="p-2">{row.data[formData.columnMapping.description]}</td>
+                                        <td className="p-2">{formData.columnMapping.quantity !== '' ? parseInt(row.data[formData.columnMapping.quantity]) || 1 : 1}</td>
+                                        <td className="p-2">{formData.columnMapping.price !== '' ? parseFloat(row.data[formData.columnMapping.price]).toFixed(2) : 0}</td>
+                                      </tr>
+                                    ))}
+                                </tbody>
+                              </table>
+                            </div>
+                            <div className="flex gap-3">
+                              <button onClick={() => setFormData({...formData, parseStep: 'mapping'})} className="flex-1 bg-gray-400 text-white py-2 rounded">Nazad</button>
+                              <button onClick={() => {
+                                  const items = formData.sheetData
+                                    .filter(row => row.data[formData.columnMapping.description])
+                                    .map(row => {
+                                      const desc = String(row.data[formData.columnMapping.description] || '').trim();
+                                      const qty = formData.columnMapping.quantity !== '' ? parseInt(row.data[formData.columnMapping.quantity]) || 1 : 1;
+                                      const price = formData.columnMapping.price !== '' ? parseFloat(row.data[formData.columnMapping.price]) || 0 : 0;
+                                      return {
+                                        description: desc,
+                                        quantity: qty,
+                                        price: price,
+                                        dimensions: formData.columnMapping.dimensions !== '' ? String(row.data[formData.columnMapping.dimensions] || '').trim() : '',
+                                        weight: formData.columnMapping.weight !== '' ? String(row.data[formData.columnMapping.weight] || '').trim() : '',
+                                        volume: formData.columnMapping.volume !== '' ? String(row.data[formData.columnMapping.volume] || '').trim() : '',
+                                        image: row.image || '',
+                                        discount: 0,
+                                        discountType: '%'
+                                      };
+                                    });
+                                  if (items.length === 0) {
+                                    alert('Nema stavki!');
+                                  } else {
+                                    setFormData({...formData, items, parseStep: 'details'});
+                                  }
+                                }} className="flex-1 bg-green-600 text-white py-2 rounded font-bold">Nastavi</button>
+                            </div>
+                          </div>
+                        )}
+
+                        {formData.parseStep === 'details' && formData.items.length > 0 && (
+                          <div className="p-6 bg-blue-50 rounded-lg">
+                            <h3 className="text-xl font-bold mb-4">Detalji Ponude</h3>
+                            <div className="grid grid-cols-2 gap-4 mb-6">
+                              <input type="text" placeholder="Naslov Ponude *" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} className="border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                            </div>
+
+                            <div className="mb-6 bg-white p-4 rounded max-h-96 overflow-y-auto border-2 border-gray-200">
+                              <p className="font-bold mb-3">Stavke ({formData.items.length}):</p>
+                              {formData.items.length === 0 ? (
+                                <p className="text-red-500">GREŠKA: Nema stavki! Proverite mapiranje.</p>
+                              ) : (
+                                <table className="w-full text-xs">
+                                  <thead className="sticky top-0 bg-gray-100">
+                                    <tr>
+                                      <th className="p-1">#</th>
+                                      <th className="p-1">Proizvod</th>
+                                      <th className="p-1 w-10">Kom</th>
+                                      <th className="p-1 w-12">Cena</th>
+                                      <th className="p-1 w-14">Popust</th>
+                                      <th className="p-1 w-14">Finalno</th>
+                                      <th className="p-1 w-8">Akcije</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {formData.items.map((item, i) => {
+                                      const basePrice = item.quantity * item.price;
+                                      const discount = item.discount || 0;
+                                      const discountType = item.discountType || '%';
+                                      const discountAmount = discountType === '%' ? (basePrice * discount) / 100 : discount;
+                                      const finalPrice = basePrice - discountAmount;
+                                      return (
+                                        <tr key={i} className="border-b hover:bg-gray-50">
+                                          <td className="p-1 text-gray-500">{i + 1}</td>
+                                          <td className="p-1 font-medium">{item.description}</td>
+                                          <td className="p-1">
+                                            <input type="number" min="1" value={item.quantity} onChange={(e) => {
+                                                const newItems = [...formData.items];
+                                                newItems[i].quantity = parseInt(e.target.value) || 1;
+                                                setFormData({...formData, items: newItems});
+                                              }} className="w-9 border rounded px-1 py-1 text-center text-xs"/>
+                                          </td>
+                                          <td className="p-1">
+                                            <input type="number" step="0.01" min="0" value={item.price} onChange={(e) => {
+                                                const newItems = [...formData.items];
+                                                newItems[i].price = parseFloat(e.target.value) || 0;
+                                                setFormData({...formData, items: newItems});
+                                              }} className="w-11 border rounded px-1 py-1 text-xs"/>
+                                          </td>
+                                          <td className="p-1">
+                                            <div className="flex gap-1">
+                                              <input type="number" step="0.1" min="0" value={item.discount || 0} onChange={(e) => {
+                                                  const newItems = [...formData.items];
+                                                  newItems[i].discount = e.target.value === '' ? 0 : parseFloat(e.target.value);
+                                                  setFormData({...formData, items: newItems});
+                                                }} onFocus={(e) => e.target.select()} className="w-9 border rounded px-1 py-1 text-xs font-semibold"/>
+                                              <select value={item.discountType || '%'} onChange={(e) => {
+                                                  const newItems = [...formData.items];
+                                                  newItems[i].discountType = e.target.value;
+                                                  setFormData({...formData, items: newItems});
+                                                }} className="w-10 border rounded px-1 py-1 text-xs font-semibold">
+                                                <option value="%">%</option>
+                                                <option value="€">€</option>
+                                              </select>
+                                            </div>
+                                          </td>
+                                          <td className={`p-1 font-bold ${discount > 0 ? 'text-green-600' : ''}`}>{finalPrice.toFixed(2)}</td>
+                                          <td className="p-1">
+                                            <button onClick={() => {
+                                                const newItems = formData.items.filter((_, idx) => idx !== i);
+                                                setFormData({...formData, items: newItems});
+                                              }} className="bg-red-100 text-red-600 hover:bg-red-200 px-1 py-1 rounded text-xs font-semibold">✕</button>
+                                          </td>
+                                        </tr>
+                                      );
+                                    })}
+                                  </tbody>
+                                </table>
+                              )}
+                            </div>
+
+                            <div className="bg-gradient-to-r from-indigo-100 to-purple-100 p-6 rounded-lg mb-6 border-2 border-indigo-300">
+                              <div className="text-center">
+                                <p className="text-2xl font-bold text-green-600">
+                                  {formData.items.reduce((sum, item) => sum + (item.quantity * item.price), 0).toFixed(2)}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-3">
+                              <button onClick={() => setFormData({...formData, parseStep: 'preview'})} className="flex-1 bg-gray-400 text-white py-2 rounded hover:bg-gray-500">Nazad</button>
+                              <button onClick={handleCreateOffer} className="flex-1 bg-green-600 text-white py-2 rounded font-bold hover:bg-green-700">Kreiraj Ponudu</button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Projects Tab */}
+                {activeTab === 'projects' && (
+                  <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                    <div className="lg:col-span-1 bg-white rounded-lg shadow-lg p-6">
+                      <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-bold">Projekti</h2>
+                        <button onClick={() => setShowNewProjectForm(true)} className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition" title="Kreiraj novi projekat"><Plus size={18} /></button>
+                      </div>
+                      {projects.length === 0 ? (
+                        <p className="text-gray-500 text-center py-4">Nema projekata. Kreiraj iz ponude ili novi.</p>
+                      ) : (
+                        <div className="space-y-2 max-h-96 overflow-y-auto">
+                          {projects.map(project => (
+                            <div key={project.id} onClick={() => setSelectedProject(project)} className={`p-3 rounded-lg cursor-pointer transition ${selectedProject?.id === project.id ? 'bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}>
+                              <p className="font-semibold text-sm">{project.title}</p>
+                              <p className="text-xs opacity-75">{project.clientName}</p>
+                              <p className="text-xs mt-1">{project.tasks.length} zadataka</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="lg:col-span-3">
+                      {showNewProjectForm ? (
+                        <div className="bg-white rounded-lg shadow-lg p-8">
+                          <h3 className="text-2xl font-bold mb-6">Kreiraj Novi Projekat</h3>
+                          
+                          {clients.length === 0 ? (
+                            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded">
+                              <p className="font-semibold text-yellow-900">Prvo dodaj klijente!</p>
+                              <p className="text-sm text-yellow-700">Idi na "Klijenti" tab i dodaj klijente.</p>
+                            </div>
+                          ) : (
+                            <div>
+                              <div className="grid grid-cols-2 gap-4 mb-6">
+                                <div>
+                                  <label className="block font-semibold mb-2 text-sm">Klijent *</label>
+                                  <select value={newProjectData.clientId} onChange={(e) => setNewProjectData({...newProjectData, clientId: e.target.value})} className="w-full border rounded px-4 py-2 focus:outline-none focus:border-indigo-500">
+                                    <option value="">-- Odaberi Klijenta --</option>
+                                    {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                  </select>
+                                </div>
+                                <div>
+                                  <label className="block font-semibold mb-2 text-sm">Naziv Projekta *</label>
+                                  <input type="text" placeholder="Naziv projekta" value={newProjectData.title} onChange={(e) => setNewProjectData({...newProjectData, title: e.target.value})} className="w-full border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                                </div>
+                                <div>
+                                  <label className="block font-semibold mb-2 text-sm">Početni Datum</label>
+                                  <input type="date" value={newProjectData.startDate} onChange={(e) => setNewProjectData({...newProjectData, startDate: e.target.value})} className="w-full border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                                </div>
+                                <div>
+                                  <label className="block font-semibold mb-2 text-sm">Završni Datum</label>
+                                  <input type="date" value={newProjectData.endDate} onChange={(e) => setNewProjectData({...newProjectData, endDate: e.target.value})} className="w-full border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                                </div>
+                              </div>
+
+                              <div className="mb-6">
+                                <label className="block font-semibold mb-2 text-sm">Opis Projekta</label>
+                                <textarea placeholder="Opis projekta..." value={newProjectData.description} onChange={(e) => setNewProjectData({...newProjectData, description: e.target.value})} rows="4" className="w-full border rounded px-4 py-2 focus:outline-none focus:border-indigo-500"/>
+                              </div>
+
+                              <div className="flex gap-3">
+                                <button onClick={() => { setShowNewProjectForm(false); setNewProjectData({clientId: '', title: '', description: '', startDate: new Date().toISOString().split('T')[0], endDate: ''}); }} className="flex-1 bg-gray-400 text-white py-2 rounded hover:bg-gray-500 transition">Otkaži</button>
+                                <button onClick={createNewProject} className="flex-1 bg-green-600 text-white py-2 rounded font-bold hover:bg-green-700 transition">Kreiraj Projekat</button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ) : selectedProject ? (
+                        <div className="bg-white rounded-lg shadow-lg p-8">
+                          <div className="flex justify-between items-start mb-6">
+                            <div>
+                              <h2 className="text-3xl font-bold">{selectedProject.title}</h2>
+                              <p className="text-gray-600">Klijent: {selectedProject.clientName}</p>
+                              <p className="text-sm text-gray-500">{selectedProject.createdDate}</p>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-4 gap-4 mb-6">
+                            {(() => {
+                              const stats = getProjectStats(selectedProject);
+                              return (
+                                <>
+                                  <div className="bg-blue-50 p-4 rounded-lg text-center">
+                                    <p className="text-2xl font-bold text-blue-600">{stats.totalTasks}</p>
+                                    <p className="text-sm text-gray-600">Ukupno zadataka</p>
+                                  </div>
+                                  <div className="bg-green-50 p-4 rounded-lg text-center">
+                                    <p className="text-2xl font-bold text-green-600">{stats.completedTasks}</p>
+                                    <p className="text-sm text-gray-600">Završeno</p>
+                                  </div>
+                                  <div className="bg-yellow-50 p-4 rounded-lg text-center">
+                                    <p className="text-2xl font-bold text-yellow-600">{stats.totalHours}h</p>
+                                    <p className="text-sm text-gray-600">Sati</p>
+                                  </div>
+                                  <div className="bg-red-50 p-4 rounded-lg text-center">
+                                    <p className="text-2xl font-bold text-red-600">{stats.overdueTasks}</p>
+                                    <p className="text-sm text-gray-600">Dospelo</p>
+                                  </div>
+                                </>
+                              );
+                            })()}
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-6">
+                            <div>
+                              <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-xl font-bold">Zadaci</h3>
+                                <button onClick={() => setShowTaskForm(true)} className="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700 transition"><Plus size={18} /></button>
+                              </div>
+                              {showTaskForm && (
+                                <div className="mb-4 p-4 bg-yellow-50 rounded-lg border-2 border-yellow-200">
+                                  <input type="text" placeholder="Naslov zadatka *" value={newTaskData.title} onChange={(e) => setNewTaskData({...newTaskData, title: e.target.value})} className="w-full border rounded px-3 py-2 mb-2 text-sm"/>
+                                  <textarea placeholder="Opis" value={newTaskData.description} onChange={(e) => setNewTaskData({...newTaskData, description: e.target.value})} rows="2" className="w-full border rounded px-3 py-2 mb-2 text-sm"/>
+                                  <select value={newTaskData.assignee} onChange={(e) => setNewTaskData({...newTaskData, assignee: e.target.value})} className="w-full border rounded px-3 py-2 mb-2 text-sm">
+                                    <option value="">Dodeli članovima</option>
+                                    {selectedProject.members.map(m => <option key={m.id} value={m.name}>{m.name}</option>)}
+                                  </select>
+                                  <input type="date" value={newTaskData.dueDate} onChange={(e) => setNewTaskData({...newTaskData, dueDate: e.target.value})} className="w-full border rounded px-3 py-2 mb-2 text-sm"/>
+                                  <div className="flex gap-2">
+                                    <button onClick={() => setShowTaskForm(false)} className="flex-1 bg-gray-400 text-white py-1 rounded text-sm">Otkaži</button>
+                                    <button onClick={addTaskToProject} className="flex-1 bg-green-600 text-white py-1 rounded text-sm">Dodaj</button>
+                                  </div>
+                                </div>
+                              )}
+
+                              <div className="space-y-3 max-h-96 overflow-y-auto">
+                                {selectedProject.tasks.length === 0 ? (
+                                  <p className="text-gray-500 text-center py-4">Nema zadataka</p>
+                                ) : (
+                                  selectedProject.tasks.map(task => (
+                                    <div key={task.id} className="p-3 border rounded-lg">
+                                      <div className="flex justify-between items-start">
+                                        <div className="flex-1">
+                                          <p className="font-semibold text-sm">{task.title}</p>
+                                          <p className="text-xs text-gray-600">Dodeljen: {task.assignee}</p>
+                                          {task.dueDate && <p className="text-xs text-gray-500">Rok: {task.dueDate}</p>}
+                                        </div>
+                                        <button onClick={() => deleteTask(task.id)} className="text-red-500 hover:text-red-700"><Trash2 size={16} /></button>
+                                      </div>
+                                      <div className="mt-2 flex gap-2 items-center flex-wrap">
+                                        <select value={task.status} onChange={(e) => updateTaskStatus(task.id, e.target.value)} className={`text-xs py-1 px-2 rounded ${getStatusColor(task.status)}`}>
+                                          <option value="pending">Na čekanju</option>
+                                          <option value="in_progress">U toku</option>
+                                          <option value="completed">Završeno</option>
+                                          <option value="overdue">Dospelo</option>
+                                        </select>
+                                        <div className="flex items-center gap-1">
+                                          <Clock size={14} />
+                                          <input type="number" min="0" step="0.5" value={task.hoursLogged} onChange={(e) => updateTaskHours(task.id, e.target.value)} className="w-12 border rounded px-1 py-1 text-xs text-center" placeholder="sati"/>
+                                          <span className="text-xs text-gray-600">h</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))
+                                )}
+                              </div>
+                            </div>
+
+                            <div>
+                              <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-xl font-bold">Članovi Tima</h3>
+                                <button onClick={() => setShowMemberForm(true)} className="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700 transition"><Plus size={18} /></button>
+                              </div>
+
+                              {showMemberForm && (
+                                <div className="mb-4 p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
+                                  <input type="text" placeholder="Ime člana *" value={newMemberData.name} onChange={(e) => setNewMemberData({...newMemberData, name: e.target.value})} className="w-full border rounded px-3 py-2 mb-2 text-sm"/>
+                                  <input type="email" placeholder="Email *" value={newMemberData.email} onChange={(e) => setNewMemberData({...newMemberData, email: e.target.value})} className="w-full border rounded px-3 py-2 mb-2 text-sm"/>
+                                  <input type="text" placeholder="Uloga" value={newMemberData.role} onChange={(e) => setNewMemberData({...newMemberData, role: e.target.value})} className="w-full border rounded px-3 py-2 mb-2 text-sm"/>
+                                  <div className="flex gap-2">
+                                    <button onClick={() => setShowMemberForm(false)} className="flex-1 bg-gray-400 text-white py-1 rounded text-sm">Otkaži</button>
+                                    <button onClick={addMemberToProject} className="flex-1 bg-green-600 text-white py-1 rounded text-sm">Dodaj</button>
+                                  </div>
+                                </div>
+                              )}
+
+                              <div className="space-y-2 max-h-96 overflow-y-auto">
+                                {selectedProject.members.map(member => (
+                                  <div key={member.id} className="p-3 bg-gray-50 rounded-lg border">
+                                    <div className="flex justify-between items-start">
+                                      <div className="flex-1">
+                                        <p className="font-semibold text-sm">{member.name}</p>
+                                        <p className="text-xs text-gray-600">{member.role}</p>
+                                        <p className="text-xs text-gray-500">{member.email}</p>
+                                      </div>
+                                      {member.role !== 'Project Manager' && (
+                                        <button onClick={() => deleteMember(member.id)} className="text-red-500 hover:text-red-700"><Trash2 size={16} /></button>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="bg-white rounded-lg shadow-lg p-12 text-center">
+                          <FileText size={48} className="mx-auto text-gray-400 mb-4" />
+                          <p className="text-gray-500">Izaberi projekat ili ga kreiraj iz ponude</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+{activeTab === 'quick-offer' && (
+  <div className="bg-white rounded-lg shadow-lg p-8">
+    <h2 className="text-2xl font-bold mb-6">Brza Kreiranja Ponude</h2>
+    
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* LEVA KOLONA - IZBOR KLIJENTA I NAZIV */}
+      <div className="lg:col-span-1 bg-blue-50 rounded-lg p-6">
+        <h3 className="font-bold text-lg mb-4">1. Osnovno</h3>
+        
+        <label className="block font-semibold mb-2 text-sm">Odaberi Klijenta *</label>
+        <select 
+          value={selectedClient?.id || ''} 
+          onChange={(e) => {
+            const client = clients.find(c => c.id === parseInt(e.target.value));
+            setSelectedClient(client);
+          }} 
+          className="w-full border-2 rounded px-3 py-2 mb-4"
+        >
+          <option value="">-- Izaberi --</option>
+          {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+        </select>
+
+        {selectedClient && (
+          <>
+            <label className="block font-semibold mb-2 text-sm">Naziv Ponude *</label>
+            <input 
+              type="text" 
+              placeholder="Unesi naziv" 
+              value={quickOfferData.offerTitle}
+              onChange={(e) => setQuickOfferData({...quickOfferData, offerTitle: e.target.value})}
+              className="w-full border rounded px-3 py-2"
+            />
+            
+            <div className="mt-6 p-4 bg-white rounded border-2 border-blue-200">
+              <p className="text-xs text-gray-600 mb-1">KLIJENT:</p>
+              <p className="font-bold text-sm">{selectedClient.name}</p>
+              <p className="text-xs text-gray-600 mt-2">STAVKI: {quickOfferData.items.length}</p>
+              <p className="text-xs text-gray-600 mt-1">UKUPNO:</p>
+              <p className="font-bold text-green-600">
+                {quickOfferData.items.reduce((sum, item) => {
+                  const basePrice = item.quantity * item.price;
+                  const discount = item.discount || 0;
+                  const discountType = item.discountType || '%';
+                  const discountAmount = discountType === '%' ? (basePrice * discount) / 100 : discount;
+                  return sum + (basePrice - discountAmount);
+                }, 0).toFixed(2)} €
+              </p>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* DESNA KOLONA - DODAVANJE STAVKI */}
+      <div className="lg:col-span-2">
+        <h3 className="font-bold text-lg mb-4">2. Dodaj Stavke</h3>
+
+        {!selectedClient ? (
+          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+            <p className="text-yellow-900 font-semibold">Prvo odaberi klijenta!</p>
+          </div>
+        ) : (
+          <>
+            {/* FORMA ZA DODAVANJE NOVE STAVKE */}
+            <div className="bg-gray-50 p-6 rounded-lg border-2 border-gray-200 mb-6">
+              <p className="font-bold mb-4">Nova Stavka</p>
+              
+              <div className="space-y-3 mb-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Opis *</label>
+                  <input 
+                    type="text" 
+                    placeholder="Npr: Web dizajn" 
+                    value={newQuickItem.description}
+                    onChange={(e) => setNewQuickItem({...newQuickItem, description: e.target.value})}
+                    className="w-full border rounded px-3 py-2"
+                  />
+                </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">Količina</label>
+                    <input 
+                      type="number" 
+                      min="1"
+                      value={newQuickItem.quantity}
+                      onChange={(e) => setNewQuickItem({...newQuickItem, quantity: parseInt(e.target.value) || 1})}
+                      className="w-full border rounded px-3 py-2"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">Cena €</label>
+                    <input 
+                      type="number" 
+                      step="0.01"
+                      min="0"
+                      value={newQuickItem.price}
+                      onChange={(e) => setNewQuickItem({...newQuickItem, price: parseFloat(e.target.value) || 0})}
+                      className="w-full border rounded px-3 py-2"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">Popust</label>
+                    <div className="flex gap-2">
+                      <input 
+                        type="number" 
+                        step="0.1"
+                        min="0"
+                        value={newQuickItem.discount}
+                        onChange={(e) => setNewQuickItem({...newQuickItem, discount: parseFloat(e.target.value) || 0})}
+                        className="flex-1 border rounded px-3 py-2"
+                      />
+                      <select 
+                        value={newQuickItem.discountType}
+                        onChange={(e) => setNewQuickItem({...newQuickItem, discountType: e.target.value})}
+                        className="w-12 border rounded px-2 py-2"
+                      >
+                        <option value="%">%</option>
+                        <option value="€">€</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => {
+                  if (!newQuickItem.description.trim()) {
+                    alert('Unesi opis stavke!');
+                    return;
+                  }
+                  if (newQuickItem.price <= 0) {
+                    alert('Unesi cenu!');
+                    return;
+                  }
+                  setQuickOfferData({
+                    ...quickOfferData,
+                    items: [...quickOfferData.items, {...newQuickItem, id: Date.now()}]
+                  });
+                  setNewQuickItem({description: '', quantity: 1, price: 0, discount: 0, discountType: '%'});
+                }}
+                className="w-full bg-green-600 text-white py-2 rounded font-bold hover:bg-green-700"
+              >
+                + Dodaj Stavku
+              </button>
+            </div>
+
+            {/* LISTA STAVKI */}
+            {quickOfferData.items.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <p>Nema stavki. Dodaj prvu stavku gore.</p>
+              </div>
+            ) : (
+              <div className="space-y-3 mb-6">
+                <p className="font-bold">Stavke ({quickOfferData.items.length}):</p>
+                <div className="bg-white rounded border max-h-80 overflow-y-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-gray-100 border-b">
+                        <th className="p-2 text-left">Opis</th>
+                        <th className="p-2 text-center w-12">Kom</th>
+                        <th className="p-2 text-center w-16">Cena</th>
+                        <th className="p-2 text-center w-16">Popust</th>
+                        <th className="p-2 text-right w-16">Ukupno</th>
+                        <th className="p-2 text-center w-10"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {quickOfferData.items.map((item, idx) => {
+                        const basePrice = item.quantity * item.price;
+                        const discount = item.discount || 0;
+                        const discountType = item.discountType || '%';
+                        const discountAmount = discountType === '%' ? (basePrice * discount) / 100 : discount;
+                        const finalPrice = basePrice - discountAmount;
+                        
+                        return (
+                          <tr key={item.id} className="border-b hover:bg-gray-50">
+                            <td className="p-2">{item.description}</td>
+                            <td className="p-2 text-center">{item.quantity}</td>
+                            <td className="p-2 text-center">{item.price.toFixed(2)}</td>
+                            <td className="p-2 text-center text-sm">
+                              {discount > 0 ? (
+                                <span className="text-red-600 font-bold">-{discount}{discountType}</span>
+                              ) : (
+                                <span className="text-gray-400">-</span>
+                              )}
+                            </td>
+                            <td className={`p-2 text-right font-bold ${discount > 0 ? 'text-green-600' : ''}`}>
+                              {finalPrice.toFixed(2)}
+                            </td>
+                            <td className="p-2 text-center">
+                              <button 
+                                onClick={() => setQuickOfferData({
+                                  ...quickOfferData,
+                                  items: quickOfferData.items.filter(i => i.id !== item.id)
+                                })}
+                                className="text-red-500 hover:text-red-700 font-bold"
+                              >
+                                ✕
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* DUGME ZA KREIRANJE */}
+            {quickOfferData.items.length > 0 && quickOfferData.offerTitle && (
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => {
+                    setQuickOfferData({offerTitle: '', items: []});
+                    setSelectedClient(null);
+                    setNewQuickItem({description: '', quantity: 1, price: 0, discount: 0, discountType: '%'});
+                  }}
+                  className="flex-1 bg-gray-400 text-white py-2 rounded hover:bg-gray-500 font-bold"
+                >
+                  Resetuj
+                </button>
+                <button 
+                  onClick={() => {
+                    const subtotal = quickOfferData.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+                    const totalDiscount = quickOfferData.items.reduce((sum, item) => {
+                      const discount = item.discount || 0;
+                      const type = item.discountType || '%';
+                      const basePrice = item.quantity * item.price;
+                      return sum + (type === '%' ? (basePrice * discount) / 100 : discount);
+                    }, 0);
+                    const totalAmount = subtotal - totalDiscount;
+
+                    const newOffer = {
+                      id: Date.now(),
+                      clientId: selectedClient.id,
+                      clientName: selectedClient.name,
+                      title: quickOfferData.offerTitle,
+                      items: quickOfferData.items.map(({id, ...item}) => item),
+                      status: 'pending',
+                      createdDate: new Date().toLocaleDateString('sr-RS'),
+                      subtotal: subtotal,
+                      totalDiscount: totalDiscount,
+                      totalAmount: totalAmount,
+                      note: ''
+                    };
+
+                    setOffers([newOffer, ...offers]);
+                    setClients(clients.map(c => c.id === selectedClient.id ? {
+                      ...c,
+                      history: [{
+                        type: 'offer',
+                        title: quickOfferData.offerTitle,
+                        date: new Date().toLocaleDateString('sr-RS'),
+                        amount: totalAmount,
+                        offerId: newOffer.id
+                      }, ...c.history],
+                      totalOffers: c.totalOffers + 1,
+                      totalAmount: c.totalAmount + totalAmount
+                    } : c));
+
+                    alert('✓ Ponuda kreirana!');
+                    setQuickOfferData({offerTitle: '', items: []});
+                    setSelectedClient(null);
+                    setNewQuickItem({description: '', quantity: 1, price: 0, discount: 0, discountType: '%'});
+                    setActiveTab('offers');
+                  }}
+                  className="flex-1 bg-green-600 text-white py-2 rounded hover:bg-green-700 font-bold"
+                >
+                  Kreiraj Ponudu
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  </div>
+)}
+{activeTab === 'reminders' && (
+  <div className="space-y-6">
+    {/* FORM ZA DODAVANJE REMINDEREA */}
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border-2 border-indigo-200">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold">Postavireminder za Follow-up</h2>
+        <button 
+          onClick={() => setShowReminderForm(!showReminderForm)}
+          className="px-4 py-2 bg-green-500 text-white rounded font-bold hover:bg-green-600"
+        >
+          + Novi Reminder
+        </button>
+      </div>
+
+      {showReminderForm && (
+        <div className="bg-white rounded-lg p-4 border-2 border-indigo-300">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block font-semibold mb-2 text-sm">Klijent *</label>
+              <select 
+                value={newReminder.clientId}
+                onChange={(e) => {
+                  const client = clients.find(c => c.id === parseInt(e.target.value));
+                  if (client) {
+                    setNewReminder({...newReminder, clientId: e.target.value, clientName: client.name});
+                  }
+                }}
+                className="w-full border rounded px-3 py-2"
+              >
+                <option value="">-- Odaberi Klijenta --</option>
+                {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </div>
+
+            <div>
+              <label className="block font-semibold mb-2 text-sm">Za N Dana *</label>
+              <div className="flex gap-2">
+                <input 
+                  type="number"
+                  min="1"
+                  value={newReminder.daysFromNow}
+                  onChange={(e) => setNewReminder({...newReminder, daysFromNow: parseInt(e.target.value) || 1})}
+                  className="w-20 border rounded px-3 py-2"
+                />
+                <div className="flex-1 flex items-center text-sm text-gray-600">
+                  Datum: <span className="font-bold ml-2">{calculateReminderDate(newReminder.daysFromNow)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <label className="block font-semibold mb-2 text-sm">Šta trebam da uradim? *</label>
+            <textarea 
+              placeholder="Npr: Proveriti status ponude, pozvati klijenta, slati mejl..."
+              value={newReminder.description}
+              onChange={(e) => setNewReminder({...newReminder, description: e.target.value})}
+              rows="3"
+              className="w-full border rounded px-3 py-2"
+            />
+          </div>
+
+          <div className="flex gap-3">
+            <button 
+              onClick={() => setShowReminderForm(false)}
+              className="flex-1 bg-gray-400 text-white py-2 rounded hover:bg-gray-500"
+            >
+              Otkaži
+            </button>
+            <button 
+              onClick={addReminder}
+              className="flex-1 bg-green-600 text-white py-2 rounded font-bold hover:bg-green-700"
+            >
+              Postavi Reminder
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+
+    {/* DUE REMINDERS - HITNI */}
+    {getDueReminders().length > 0 && (
+      <div className="bg-red-50 rounded-lg p-6 border-2 border-red-300">
+        <h3 className="text-xl font-bold text-red-900 mb-4">🔴 Reminderi za SADA ({getDueReminders().length})</h3>
+        <div className="space-y-3">
+          {getDueReminders().map(reminder => (
+            <div key={reminder.id} className="bg-white p-4 rounded border-l-4 border-red-500">
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <p className="font-bold text-lg">{reminder.clientName}</p>
+                  <p className="text-gray-700 mt-1">{reminder.description}</p>
+                  <p className="text-xs text-gray-500 mt-2">Postavljeno: {reminder.createdDate}</p>
+                </div>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => completeReminder(reminder.id)}
+                    className="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 font-bold"
+                  >
+                    ✓ Urađeno
+                  </button>
+                  <button 
+                    onClick={() => deleteReminder(reminder.id)}
+                    className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+                  >
+                    Obriši
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {/* UPCOMING REMINDERS */}
+    {getUpcomingReminders().length > 0 && (
+      <div className="bg-yellow-50 rounded-lg p-6 border-2 border-yellow-300">
+        <h3 className="text-xl font-bold text-yellow-900 mb-4">⏰ Predstojeći Reminderi ({getUpcomingReminders().length})</h3>
+        <div className="space-y-3">
+          {getUpcomingReminders().map(reminder => {
+            const today = new Date();
+            const reminderDateObj = new Date(reminder.reminderDate);
+            const daysUntil = Math.ceil((reminderDateObj - today) / (1000 * 60 * 60 * 24));
+            
+            return (
+              <div key={reminder.id} className="bg-white p-4 rounded border-l-4 border-yellow-500">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3">
+                      <p className="font-bold text-lg">{reminder.clientName}</p>
+                      <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+                        {daysUntil === 1 ? 'Sutra' : 'Za ' + daysUntil + ' dana'}
+                      </span>
+                    </div>
+                    <p className="text-gray-700 mt-1">{reminder.description}</p>
+                    <p className="text-xs text-gray-500 mt-2">Datum: {reminder.reminderDate}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => completeReminder(reminder.id)}
+                      className="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 font-bold"
+                    >
+                      ✓ Urađeno
+                    </button>
+                    <button 
+                      onClick={() => deleteReminder(reminder.id)}
+                      className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+                    >
+                      Obriši
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    )}
+
+    {/* COMPLETED REMINDERS */}
+    {getCompletedReminders().length > 0 && (
+      <div className="bg-green-50 rounded-lg p-6 border-2 border-green-300">
+        <h3 className="text-xl font-bold text-green-900 mb-4">✓ Završeni Reminderi ({getCompletedReminders().length})</h3>
+        <div className="space-y-2">
+          {getCompletedReminders().map(reminder => (
+            <div key={reminder.id} className="bg-white p-3 rounded opacity-60">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="font-semibold text-gray-600 line-through">{reminder.clientName}</p>
+                  <p className="text-sm text-gray-500">{reminder.description}</p>
+                </div>
+                <button 
+                  onClick={() => deleteReminder(reminder.id)}
+                  className="text-red-500 hover:text-red-700 text-sm"
+                >
+                  Obriši
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {reminders.length === 0 && (
+      <div className="text-center py-12 text-gray-500">
+        <p className="text-xl mb-2">Nema reminderea</p>
+        <p className="text-sm">Postavi prvi reminder gore</p>
+      </div>
+    )}
+  </div>
+)}
+                {/* Invoice Creation Modal */}
+                {showInvoiceForm && selectedOffer && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-lg shadow-2xl p-8 max-w-2xl w-full">
+                      <h3 className="text-2xl font-bold mb-6">Kreiraj Fakturu</h3>
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <label className="block text-sm font-semibold mb-2">Valuta</label>
+                          <select value={invoiceForm.currency} onChange={(e) => setInvoiceForm({...invoiceForm, currency: e.target.value})} className="w-full border rounded px-3 py-2">
+                            <option value="EUR">EUR (€)</option>
+                            <option value="RSD">RSD (дин.)</option>
+                          </select>
+                        </div>
+                        <div><label className="block text-sm font-semibold mb-2">Broj Fakture</label><input type="text" placeholder={generateInvoiceNumber()} value={invoiceForm.invoiceNumber} onChange={(e) => setInvoiceForm({...invoiceForm, invoiceNumber: e.target.value})} className="w-full border rounded px-3 py-2"/></div>
+                        <div><label className="block text-sm font-semibold mb-2">Stopa PDV-a (%)</label><input type="number" min="0" max="100" value={invoiceForm.vatRate} onChange={(e) => setInvoiceForm({...invoiceForm, vatRate: parseFloat(e.target.value) || 0})} className="w-full border rounded px-3 py-2"/></div>
+                        <div><label className="block text-sm font-semibold mb-2">Datum Izdavanja</label><input type="date" value={invoiceForm.issueDate} onChange={(e) => setInvoiceForm({...invoiceForm, issueDate: e.target.value})} className="w-full border rounded px-3 py-2"/></div>
+                        <div><label className="block text-sm font-semibold mb-2">Rok Plaćanja</label><input type="date" value={invoiceForm.dueDate} onChange={(e) => setInvoiceForm({...invoiceForm, dueDate: e.target.value})} className="w-full border rounded px-3 py-2"/></div>
+                        <div><label className="block text-sm font-semibold mb-2">Uslovi Plaćanja</label><input type="text" placeholder="Npr: Transfer, Gotovina, Ček" value={invoiceForm.paymentTerms} onChange={(e) => setInvoiceForm({...invoiceForm, paymentTerms: e.target.value})} className="w-full border rounded px-3 py-2"/></div>
+                        <div><label className="block text-sm font-semibold mb-2">Status</label><select value={invoiceForm.status} onChange={(e) => setInvoiceForm({...invoiceForm, status: e.target.value})} className="w-full border rounded px-3 py-2"><option value="issued">Izdat</option><option value="paid">Plaćen</option><option value="overdue">Dospeo</option></select></div>
+                      </div>
+                      <div className="mb-6"><label className="block text-sm font-semibold mb-2">Napomena na Faktturi</label><textarea placeholder="Uslovi, opis usluge..." value={invoiceForm.notes} onChange={(e) => setInvoiceForm({...invoiceForm, notes: e.target.value})} rows="3" className="w-full border rounded px-3 py-2"/></div>
+                      <div className="bg-indigo-50 p-4 rounded mb-6">
+                        <p className="text-sm text-gray-600">Ponuda: <span className="font-bold">{selectedOffer.title}</span></p>
+                        <p className="text-sm text-gray-600">Stavki: <span className="font-bold">{selectedOffer.items.length}</span></p>
+                        <p className="text-lg font-bold text-green-600">Iznos: {selectedOffer.totalAmount.toFixed(2)} {getCurrencySymbol(invoiceForm.currency)}</p>
+                      </div>
+                      <div className="flex gap-3">
+                        <button onClick={() => { setShowInvoiceForm(false); setSelectedOffer(null); }} className="flex-1 bg-gray-400 text-white py-2 rounded hover:bg-gray-500">Otkaži</button>
+                        <button onClick={handleCreateInvoice} className="flex-1 bg-green-600 text-white py-2 rounded font-bold hover:bg-green-700">Kreiraj Fakturu</button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        }
+
+        ReactDOM.render(<OfferlyApp />, document.getElementById('root'));
+    </script>
+  </body>
+</html>
