@@ -70,7 +70,7 @@
     <div class="floating-cta">
         <a href="#contact" class="pulse-btn">
             <i class="fas fa-comments"></i>
-            <span>Besplatna Konsultacija</span>
+            <span data-i18n="floatingCTA">Besplatna Konsultacija</span>
         </a>
     </div>
 
@@ -83,13 +83,18 @@
                     <span>WebDev<strong>Pro</strong></span>
                 </div>
                 <ul class="nav-menu">
-                    <li><a href="#home" class="nav-link">Početna</a></li>
-                    <li><a href="#services" class="nav-link">Usluge</a></li>
-                    <li><a href="#portfolio" class="nav-link">Portfolio</a></li>
-                    <li><a href="#process" class="nav-link">Proces</a></li>
-                    <li><a href="#pricing" class="nav-link">Cene</a></li>
-                    <li><a href="#testimonials" class="nav-link">Recenzije</a></li>
-                    <li><a href="#contact" class="nav-link btn-nav-cta">Kontakt</a></li>
+                    <li><a href="#home" class="nav-link" data-i18n="nav.home">Početna</a></li>
+                    <li><a href="#services" class="nav-link" data-i18n="nav.services">Usluge</a></li>
+                    <li><a href="#portfolio" class="nav-link" data-i18n="nav.portfolio">Portfolio</a></li>
+                    <li><a href="#process" class="nav-link" data-i18n="nav.process">Proces</a></li>
+                    <li><a href="#pricing" class="nav-link" data-i18n="nav.pricing">Cene</a></li>
+                    <li><a href="#testimonials" class="nav-link" data-i18n="nav.testimonials">Recenzije</a></li>
+                    <li><a href="#contact" class="nav-link btn-nav-cta" data-i18n="nav.contact">Kontakt</a></li>
+                    <li class="language-switcher">
+                        <button class="lang-btn active" data-lang="sr" title="Srpski">SR</button>
+                        <span class="lang-divider">|</span>
+                        <button class="lang-btn" data-lang="en" title="English">EN</button>
+                    </li>
                 </ul>
                 <div class="hamburger">
                     <span></span>
@@ -100,43 +105,32 @@
         </div>
     </nav>
 
-    <!-- Hero Section with Video Background -->
+    <!-- Hero Section with Particles -->
     <section id="home" class="hero">
-        <!-- Video Background -->
-        <div class="video-background">
-            <video autoplay muted loop playsinline id="hero-video" poster="video-poster.jpg">
-                <source src="https://cdn.coverr.co/videos/coverr-abstract-particles-floating/1080p.mp4" type="video/mp4">
-                <!-- Fallback for browsers that don't support video -->
-            </video>
-            <div class="video-overlay"></div>
-        </div>
-
-        <!-- Particles fallback for mobile or if video fails -->
-        <div id="particles-js" class="particles-fallback"></div>
-
+        <div id="particles-js"></div>
         <div class="hero-background">
             <div class="animated-gradient"></div>
         </div>
         <div class="container">
             <div class="hero-content">
                 <div class="hero-badge" data-aos="fade-down">
-                    <i class="fas fa-award"></i> Najpouzdaniji Web Partner u Srbiji
+                    <i class="fas fa-award"></i> <span data-i18n="hero.badge">Najpouzdaniji Web Partner u Srbiji</span>
                 </div>
                 <h1 class="hero-title" data-aos="fade-up" data-aos-delay="100">
-                    Pretvarate Ideje u <br><span class="gradient-text typing-text">Profitabilne</span> Web Projekte
+                    <span data-i18n="hero.title">Pretvarate Ideje u</span> <br><span class="gradient-text typing-text" data-i18n="hero.titleTyping">Profitabilne</span> <span data-i18n="hero.titleEnd">Web Projekte</span>
                 </h1>
-                <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">
+                <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200" data-i18n="hero.subtitle">
                     <strong>Ne plaćate unapred!</strong> Dobijate kompletan web projekat koji već radi i donosi rezultate.
                     Specijalizovani smo za razvoj web aplikacija koje povećavaju vašu prodaju za <strong>minimum 40%</strong>.
                 </p>
                 <div class="hero-buttons" data-aos="fade-up" data-aos-delay="300">
                     <a href="#contact" class="btn btn-primary btn-large">
                         <i class="fas fa-rocket"></i>
-                        Započnite Projekat BESPLATNO
+                        <span data-i18n="hero.btnPrimary">Započnite Projekat BESPLATNO</span>
                     </a>
                     <a href="#portfolio" class="btn btn-secondary btn-large">
                         <i class="fas fa-play-circle"></i>
-                        Pogledajte Rezultate
+                        <span data-i18n="hero.btnSecondary">Pogledajte Rezultate</span>
                     </a>
                 </div>
 
@@ -144,34 +138,34 @@
                 <div class="trust-badges" data-aos="fade-up" data-aos-delay="400">
                     <div class="trust-item">
                         <i class="fas fa-shield-check"></i>
-                        <span>100% Garancija Povraćaja Novca</span>
+                        <span data-i18n="hero.trust1">100% Garancija Povraćaja Novca</span>
                     </div>
                     <div class="trust-item">
                         <i class="fas fa-lock"></i>
-                        <span>SSL & GDPR Compliant</span>
+                        <span data-i18n="hero.trust2">SSL & GDPR Compliant</span>
                     </div>
                     <div class="trust-item">
                         <i class="fas fa-headset"></i>
-                        <span>24/7 Premium Podrška</span>
+                        <span data-i18n="hero.trust3">24/7 Premium Podrška</span>
                     </div>
                 </div>
 
                 <div class="hero-stats">
                     <div class="stat-item" data-aos="zoom-in" data-aos-delay="500">
                         <h3 class="stat-number" data-target="250">0</h3>
-                        <p class="stat-label">Uspešnih Projekata</p>
+                        <p class="stat-label" data-i18n="hero.stat1">Uspešnih Projekata</p>
                     </div>
                     <div class="stat-item" data-aos="zoom-in" data-aos-delay="600">
                         <h3 class="stat-number" data-target="99">0</h3>
-                        <p class="stat-label">% Zadovoljnih Klijenata</p>
+                        <p class="stat-label" data-i18n="hero.stat2">% Zadovoljnih Klijenata</p>
                     </div>
                     <div class="stat-item" data-aos="zoom-in" data-aos-delay="700">
                         <h3 class="stat-number" data-target="7">0</h3>
-                        <p class="stat-label">Godina Iskustva</p>
+                        <p class="stat-label" data-i18n="hero.stat3">Godina Iskustva</p>
                     </div>
                     <div class="stat-item" data-aos="zoom-in" data-aos-delay="800">
                         <h3 class="stat-number" data-target="48">0</h3>
-                        <p class="stat-label">h Prosečno Vreme Odgovora</p>
+                        <p class="stat-label" data-i18n="hero.stat4">h Prosečno Vreme Odgovora</p>
                     </div>
                 </div>
             </div>
@@ -189,28 +183,28 @@
                     <i class="fas fa-gift"></i>
                 </div>
                 <div class="offer-text">
-                    <h3>SPECIJALNA PONUDA!</h3>
-                    <p>Prvi projekat sa <strong>30% popusta</strong> + BESPLATNO održavanje 3 meseca</p>
+                    <h3 data-i18n="offer.title">SPECIJALNA PONUDA!</h3>
+                    <p data-i18n="offer.text">Prvi projekat sa <strong>30% popusta</strong> + BESPLATNO održavanje 3 meseca</p>
                 </div>
                 <div class="offer-countdown" id="countdown">
                     <div class="countdown-item">
                         <span class="countdown-value" id="days">00</span>
-                        <span class="countdown-label">Dana</span>
+                        <span class="countdown-label" data-i18n="offer.days">Dana</span>
                     </div>
                     <div class="countdown-item">
                         <span class="countdown-value" id="hours">00</span>
-                        <span class="countdown-label">Sati</span>
+                        <span class="countdown-label" data-i18n="offer.hours">Sati</span>
                     </div>
                     <div class="countdown-item">
                         <span class="countdown-value" id="minutes">00</span>
-                        <span class="countdown-label">Min</span>
+                        <span class="countdown-label" data-i18n="offer.minutes">Min</span>
                     </div>
                     <div class="countdown-item">
                         <span class="countdown-value" id="seconds">00</span>
-                        <span class="countdown-label">Sek</span>
+                        <span class="countdown-label" data-i18n="offer.seconds">Sek</span>
                     </div>
                 </div>
-                <a href="#contact" class="btn btn-white">Iskoristite Ponudu</a>
+                <a href="#contact" class="btn btn-white" data-i18n="offer.btn">Iskoristite Ponudu</a>
             </div>
         </div>
     </section>
@@ -1261,6 +1255,7 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js" defer></script>
+    <script src="translations.js"></script>
     <script src="script.js" defer></script>
 
     <!-- PWA Registration -->

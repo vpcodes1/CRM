@@ -792,52 +792,6 @@ const debouncedScroll = debounce(() => {
 
 window.addEventListener('scroll', debouncedScroll);
 
-// ===== VIDEO BACKGROUND CONTROL =====
-const heroVideo = document.getElementById('hero-video');
-const particlesFallback = document.getElementById('particles-js');
-
-if (heroVideo) {
-    // Check if video can play
-    heroVideo.addEventListener('canplay', () => {
-        console.log('✅ Video background loaded successfully');
-        // Hide particles if video is working
-        if (particlesFallback) {
-            particlesFallback.style.display = 'none';
-        }
-    });
-
-    // Fallback to particles if video fails
-    heroVideo.addEventListener('error', () => {
-        console.log('⚠️ Video background failed, using particles fallback');
-        heroVideo.style.display = 'none';
-        if (particlesFallback) {
-            particlesFallback.style.display = 'block';
-        }
-    });
-
-    // Pause video when not in view (performance)
-    const videoObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                heroVideo.play();
-            } else {
-                heroVideo.pause();
-            }
-        });
-    }, { threshold: 0.5 });
-
-    videoObserver.observe(heroVideo);
-
-    // Disable video on mobile to save bandwidth
-    if (window.innerWidth <= 768) {
-        heroVideo.style.display = 'none';
-        if (particlesFallback) {
-            particlesFallback.style.display = 'block';
-        }
-        console.log('📱 Mobile detected - using particles instead of video');
-    }
-}
-
 // ===== IMAGE LAZY LOADING WITH BLUR =====
 const lazyImages = document.querySelectorAll('img[data-src]');
 const imageObserverBlur = new IntersectionObserver((entries, observer) => {
@@ -856,31 +810,9 @@ const imageObserverBlur = new IntersectionObserver((entries, observer) => {
 
 lazyImages.forEach(img => imageObserverBlur.observe(img));
 
-// ===== CONNECTION QUALITY CHECK =====
-if ('connection' in navigator) {
-    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-
-    if (connection) {
-        // Disable video on slow connections
-        if (connection.effectiveType === '2g' || connection.effectiveType === 'slow-2g') {
-            console.log('⚠️ Slow connection detected - optimizing experience');
-            if (heroVideo) {
-                heroVideo.style.display = 'none';
-            }
-            if (particlesFallback) {
-                particlesFallback.style.display = 'block';
-            }
-        }
-
-        // Log connection info
-        console.log(`📡 Connection: ${connection.effectiveType}, ${connection.downlink}Mbps`);
-    }
-}
-
 // ===== CONSOLE MESSAGE =====
 console.log('%c🚀 Landing Page Loaded Successfully!', 'color: #6366f1; font-size: 20px; font-weight: bold;');
 console.log('%cMade with ❤️ using modern web technologies', 'color: #6b7280; font-size: 12px;');
-console.log('%c- Video Background with fallback', 'color: #10b981;');
 console.log('%c- PWA Support (installable app)', 'color: #10b981;');
 console.log('%c- Particles.js for background effects', 'color: #10b981;');
 console.log('%c- AOS for scroll animations', 'color: #10b981;');

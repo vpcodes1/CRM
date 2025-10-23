@@ -187,6 +187,40 @@ body {
     display: none;
 }
 
+.language-switcher {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.lang-btn {
+    background: transparent;
+    border: 2px solid var(--border-color);
+    color: var(--text-dark);
+    padding: 0.4rem 0.8rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.lang-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.lang-btn.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--text-white);
+}
+
+.lang-divider {
+    color: var(--text-light);
+    font-weight: 300;
+}
+
 .hamburger {
     display: none;
     flex-direction: column;
@@ -212,40 +246,7 @@ body {
     overflow: hidden;
 }
 
-/* Video Background */
-.video-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    overflow: hidden;
-}
-
-.video-background video {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    min-width: 100%;
-    min-height: 100%;
-    width: auto;
-    height: auto;
-    transform: translate(-50%, -50%);
-    object-fit: cover;
-}
-
-.video-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 1;
-}
-
-/* Particles fallback */
+/* Particles Background */
 #particles-js {
     position: absolute;
     width: 100%;
@@ -253,20 +254,6 @@ body {
     top: 0;
     left: 0;
     z-index: 0;
-}
-
-.particles-fallback {
-    display: none;
-}
-
-/* Hide video on mobile for performance */
-@media (max-width: 768px) {
-    .video-background video {
-        display: none;
-    }
-    .particles-fallback {
-        display: block;
-    }
 }
 
 .hero-background {
