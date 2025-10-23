@@ -7,8 +7,17 @@
     <title>Web Programiranje | Profesionalne Web Usluge</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
 </head>
 <body>
+    <!-- Floating CTA Button -->
+    <div class="floating-cta">
+        <a href="#contact" class="pulse-btn">
+            <i class="fas fa-comments"></i>
+            <span>Besplatna Konsultacija</span>
+        </a>
+    </div>
+
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
@@ -21,8 +30,10 @@
                     <li><a href="#home" class="nav-link">Početna</a></li>
                     <li><a href="#services" class="nav-link">Usluge</a></li>
                     <li><a href="#portfolio" class="nav-link">Portfolio</a></li>
-                    <li><a href="#about" class="nav-link">O nama</a></li>
-                    <li><a href="#contact" class="nav-link">Kontakt</a></li>
+                    <li><a href="#process" class="nav-link">Proces</a></li>
+                    <li><a href="#pricing" class="nav-link">Cene</a></li>
+                    <li><a href="#testimonials" class="nav-link">Recenzije</a></li>
+                    <li><a href="#contact" class="nav-link btn-nav-cta">Kontakt</a></li>
                 </ul>
                 <div class="hamburger">
                     <span></span>
@@ -33,41 +44,67 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- Hero Section with Particles -->
     <section id="home" class="hero">
+        <div id="particles-js"></div>
         <div class="hero-background">
             <div class="animated-gradient"></div>
         </div>
         <div class="container">
             <div class="hero-content">
-                <h1 class="hero-title">
-                    Kreiramo <span class="gradient-text">Moderne</span> Web Rešenja
+                <div class="hero-badge" data-aos="fade-down">
+                    <i class="fas fa-award"></i> Najpouzdaniji Web Partner u Srbiji
+                </div>
+                <h1 class="hero-title" data-aos="fade-up" data-aos-delay="100">
+                    Pretvarate Ideje u <br><span class="gradient-text typing-text">Profitabilne</span> Web Projekte
                 </h1>
-                <p class="hero-subtitle">
-                    Profesionalno web programiranje za vaš poslovni uspeh.
-                    Razvijamo responzivne web stranice, aplikacije i e-commerce platforme.
+                <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">
+                    <strong>Ne plaćate unapred!</strong> Dobijate kompletan web projekat koji već radi i donosi rezultate.
+                    Specijalizovani smo za razvoj web aplikacija koje povećavaju vašu prodaju za <strong>minimum 40%</strong>.
                 </p>
-                <div class="hero-buttons">
-                    <a href="#contact" class="btn btn-primary">
-                        Kontaktirajte Nas
-                        <i class="fas fa-arrow-right"></i>
+                <div class="hero-buttons" data-aos="fade-up" data-aos-delay="300">
+                    <a href="#contact" class="btn btn-primary btn-large">
+                        <i class="fas fa-rocket"></i>
+                        Započnite Projekat BESPLATNO
                     </a>
-                    <a href="#portfolio" class="btn btn-secondary">
-                        Pogledajte Projekte
+                    <a href="#portfolio" class="btn btn-secondary btn-large">
+                        <i class="fas fa-play-circle"></i>
+                        Pogledajte Rezultate
                     </a>
                 </div>
-                <div class="hero-stats">
-                    <div class="stat-item">
-                        <h3 class="stat-number" data-target="150">0</h3>
-                        <p class="stat-label">Projekata</p>
+
+                <!-- Trust Indicators -->
+                <div class="trust-badges" data-aos="fade-up" data-aos-delay="400">
+                    <div class="trust-item">
+                        <i class="fas fa-shield-check"></i>
+                        <span>100% Garancija Povraćaja Novca</span>
                     </div>
-                    <div class="stat-item">
-                        <h3 class="stat-number" data-target="98">0</h3>
+                    <div class="trust-item">
+                        <i class="fas fa-lock"></i>
+                        <span>SSL & GDPR Compliant</span>
+                    </div>
+                    <div class="trust-item">
+                        <i class="fas fa-headset"></i>
+                        <span>24/7 Premium Podrška</span>
+                    </div>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat-item" data-aos="zoom-in" data-aos-delay="500">
+                        <h3 class="stat-number" data-target="250">0</h3>
+                        <p class="stat-label">Uspešnih Projekata</p>
+                    </div>
+                    <div class="stat-item" data-aos="zoom-in" data-aos-delay="600">
+                        <h3 class="stat-number" data-target="99">0</h3>
                         <p class="stat-label">% Zadovoljnih Klijenata</p>
                     </div>
-                    <div class="stat-item">
-                        <h3 class="stat-number" data-target="5">0</h3>
+                    <div class="stat-item" data-aos="zoom-in" data-aos-delay="700">
+                        <h3 class="stat-number" data-target="7">0</h3>
                         <p class="stat-label">Godina Iskustva</p>
+                    </div>
+                    <div class="stat-item" data-aos="zoom-in" data-aos-delay="800">
+                        <h3 class="stat-number" data-target="48">0</h3>
+                        <p class="stat-label">h Prosečno Vreme Odgovora</p>
                     </div>
                 </div>
             </div>
@@ -77,102 +114,338 @@
         </div>
     </section>
 
+    <!-- Special Offer Banner -->
+    <section class="special-offer">
+        <div class="container">
+            <div class="offer-content">
+                <div class="offer-icon">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <div class="offer-text">
+                    <h3>SPECIJALNA PONUDA!</h3>
+                    <p>Prvi projekat sa <strong>30% popusta</strong> + BESPLATNO održavanje 3 meseca</p>
+                </div>
+                <div class="offer-countdown" id="countdown">
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="days">00</span>
+                        <span class="countdown-label">Dana</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="hours">00</span>
+                        <span class="countdown-label">Sati</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="minutes">00</span>
+                        <span class="countdown-label">Min</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-value" id="seconds">00</span>
+                        <span class="countdown-label">Sek</span>
+                    </div>
+                </div>
+                <a href="#contact" class="btn btn-white">Iskoristite Ponudu</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us Section -->
+    <section class="why-choose-us">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-badge">ZAŠTO BAŠE MI?</span>
+                <h2 class="section-title">Nismo Samo Programeri - Mi Smo Vaši Partneri u Uspehu</h2>
+                <p class="section-subtitle">Većina web agencija vam proda sajt i zaboravi na vas. Mi gradimo dugoročne odnose i osiguravamo da vaš projekat donosi PRAVI ROI.</p>
+            </div>
+            <div class="benefits-grid">
+                <div class="benefit-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="benefit-number">01</div>
+                    <div class="benefit-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Garantovani Rezultati</h3>
+                    <p>Naši klijenti u proseku beleže <strong>povećanje konverzije za 65%</strong> u prvih 6 meseci. Ako ne vidite rezultate, ne plaćate - jednostavno!</p>
+                    <div class="benefit-highlight">Garancija povraćaja novca</div>
+                </div>
+
+                <div class="benefit-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="benefit-number">02</div>
+                    <div class="benefit-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Brža Isporuka od Konkurencije</h3>
+                    <p>Dok drugi rade 3-6 meseci, mi isporučujemo <strong>funkcionalne projekte za 2-4 nedelje</strong>. Bez beskonačnih sastanaka i odlaganja.</p>
+                    <div class="benefit-highlight">3x brže od proseka industrije</div>
+                </div>
+
+                <div class="benefit-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="benefit-number">03</div>
+                    <div class="benefit-icon">
+                        <i class="fas fa-infinity"></i>
+                    </div>
+                    <h3>Doživotna Podrška</h3>
+                    <p>Ne ostavljamo vas sami. Dobijate <strong>prioritetnu podršku bez dodatnih troškova</strong> za sve tehničke probleme koji se pojave.</p>
+                    <div class="benefit-highlight">Odgovor u roku od 2h</div>
+                </div>
+
+                <div class="benefit-card" data-aos="fade-up" data-aos-delay="400">
+                    <div class="benefit-number">04</div>
+                    <div class="benefit-icon">
+                        <i class="fas fa-piggy-bank"></i>
+                    </div>
+                    <h3>Plaćanje u Ratama</h3>
+                    <p>Razumemo da je ulaganje veliko. Zato nudimo <strong>fleksibilne rate bez kamate</strong> do 12 meseci. Počnite već danas!</p>
+                    <div class="benefit-highlight">0% kamate na rate</div>
+                </div>
+
+                <div class="benefit-card" data-aos="fade-up" data-aos-delay="500">
+                    <div class="benefit-number">05</div>
+                    <div class="benefit-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h3>Iskustvo koje Govori</h3>
+                    <p>Radili smo sa <strong>250+ brendova</strong> iz 15 različitih industrija. Od startupova do korporacija - znamo šta funkcioniše.</p>
+                    <div class="benefit-highlight">98.7% ocena zadovoljstva</div>
+                </div>
+
+                <div class="benefit-card" data-aos="fade-up" data-aos-delay="600">
+                    <div class="benefit-number">06</div>
+                    <div class="benefit-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobilna Revolucija</h3>
+                    <p>Preko <strong>70% vašeg traffica dolazi sa mobilnih</strong> uređaja. Svi naši projekti su mobile-first i load-uju za manje od 2 sekunde.</p>
+                    <div class="benefit-highlight">Google PageSpeed 95+</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Services Section -->
     <section id="services" class="services">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Naše Usluge</h2>
-                <p class="section-subtitle">Kompletan spektar web development usluga prilagođenih vašim potrebama</p>
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-badge">ŠTA RADIMO?</span>
+                <h2 class="section-title">Kompletna Digitalna Transformacija Vašeg Biznisa</h2>
+                <p class="section-subtitle">Od ideje do kompletnog, profitabilnog web rešenja - sve pod jednim krovom</p>
             </div>
             <div class="services-grid">
-                <div class="service-card">
+                <div class="service-card" data-aos="fade-up" data-aos-delay="100">
                     <div class="service-icon">
                         <i class="fas fa-laptop-code"></i>
                     </div>
-                    <h3 class="service-title">Web Aplikacije</h3>
+                    <h3 class="service-title">Custom Web Aplikacije</h3>
                     <p class="service-description">
-                        Razvoj custom web aplikacija sa modernim tehnologijama kao što su React, Vue.js i Node.js.
+                        Ne koristimo šablone! Svaki projekat je <strong>100% prilagođen vašim potrebama</strong>.
+                        React, Vue.js, Node.js - najmodernije tehnologije za maksimalne performanse.
                     </p>
                     <ul class="service-features">
-                        <li><i class="fas fa-check"></i> Single Page Applications</li>
-                        <li><i class="fas fa-check"></i> Progressive Web Apps</li>
-                        <li><i class="fas fa-check"></i> RESTful API Development</li>
+                        <li><i class="fas fa-check"></i> Single Page Applications (SPA)</li>
+                        <li><i class="fas fa-check"></i> Progressive Web Apps (PWA)</li>
+                        <li><i class="fas fa-check"></i> RESTful & GraphQL API</li>
+                        <li><i class="fas fa-check"></i> Real-time funkcionalnosti</li>
                     </ul>
+                    <div class="service-price">Od €1,500</div>
                 </div>
 
-                <div class="service-card">
+                <div class="service-card featured" data-aos="fade-up" data-aos-delay="200">
+                    <div class="popular-badge">Najpopularnije</div>
                     <div class="service-icon">
                         <i class="fas fa-store"></i>
                     </div>
-                    <h3 class="service-title">E-Commerce</h3>
+                    <h3 class="service-title">E-Commerce Prodavnice</h3>
                     <p class="service-description">
-                        Kompletna rešenja za online prodaju sa sigurnim plaćanjem i upravljanjem zalihama.
+                        <strong>Prodajte 24/7 bez ograničenja!</strong> Kompletna online prodavnica sa automatskim plaćanjem,
+                        inventory management-om i analytics-om. Povećajte prodaju za minimum 40%.
                     </p>
                     <ul class="service-features">
-                        <li><i class="fas fa-check"></i> WooCommerce & Shopify</li>
-                        <li><i class="fas fa-check"></i> Custom Shopping Cart</li>
-                        <li><i class="fas fa-check"></i> Payment Integration</li>
+                        <li><i class="fas fa-check"></i> WooCommerce, Shopify ili Custom</li>
+                        <li><i class="fas fa-check"></i> Stripe, PayPal, Revolut integracija</li>
+                        <li><i class="fas fa-check"></i> Automatski email marketing</li>
+                        <li><i class="fas fa-check"></i> Abandoned cart recovery</li>
                     </ul>
+                    <div class="service-price">Od €2,200</div>
                 </div>
 
-                <div class="service-card">
+                <div class="service-card" data-aos="fade-up" data-aos-delay="300">
                     <div class="service-icon">
                         <i class="fas fa-mobile-alt"></i>
                     </div>
-                    <h3 class="service-title">Responzivni Dizajn</h3>
+                    <h3 class="service-title">Mobile-First Design</h3>
                     <p class="service-description">
-                        Sajt koji savršeno izgleda na svim uređajima - od mobilnih telefona do desktop računara.
+                        Vaš sajt mora savršeno raditi na SVIM uređajima. <strong>Garantujemo Google PageSpeed 90+</strong>
+                        i perfektno korisničko iskustvo na svim ekranima.
                     </p>
                     <ul class="service-features">
-                        <li><i class="fas fa-check"></i> Mobile-First Approach</li>
-                        <li><i class="fas fa-check"></i> Cross-Browser Compatible</li>
-                        <li><i class="fas fa-check"></i> Performance Optimized</li>
+                        <li><i class="fas fa-check"></i> Responsive za sve rezolucije</li>
+                        <li><i class="fas fa-check"></i> Touch-optimized interfejs</li>
+                        <li><i class="fas fa-check"></i> Lightning-fast loading</li>
+                        <li><i class="fas fa-check"></i> Cross-browser kompatibilnost</li>
                     </ul>
+                    <div class="service-price">Uključeno</div>
                 </div>
 
-                <div class="service-card">
+                <div class="service-card" data-aos="fade-up" data-aos-delay="100">
                     <div class="service-icon">
-                        <i class="fas fa-search"></i>
+                        <i class="fas fa-search-dollar"></i>
                     </div>
-                    <h3 class="service-title">SEO Optimizacija</h3>
+                    <h3 class="service-title">SEO & Marketing</h3>
                     <p class="service-description">
-                        Optimizacija sajta za pretraživače kako bi vaš biznis bio vidljiv vašim potencijalnim klijentima.
+                        Šta vredi sajt ako ga niko ne vidi? <strong>Dovedite vaš sajt na prvu stranu Google-a!</strong>
+                        On-page, off-page SEO i Google Ads kampanje koje donose rezultate.
                     </p>
                     <ul class="service-features">
-                        <li><i class="fas fa-check"></i> On-Page SEO</li>
-                        <li><i class="fas fa-check"></i> Technical SEO</li>
-                        <li><i class="fas fa-check"></i> Performance Optimization</li>
+                        <li><i class="fas fa-check"></i> Keyword research & strategija</li>
+                        <li><i class="fas fa-check"></i> On-page optimizacija</li>
+                        <li><i class="fas fa-check"></i> Link building kampanje</li>
+                        <li><i class="fas fa-check"></i> Google Analytics setup</li>
                     </ul>
+                    <div class="service-price">Od €500/mes</div>
                 </div>
 
-                <div class="service-card">
+                <div class="service-card" data-aos="fade-up" data-aos-delay="200">
                     <div class="service-icon">
                         <i class="fas fa-wordpress"></i>
                     </div>
-                    <h3 class="service-title">WordPress Development</h3>
+                    <h3 class="service-title">WordPress Pro</h3>
                     <p class="service-description">
-                        Custom WordPress teme i plugin-i prilagođeni vašim specifičnim potrebama.
+                        Custom WordPress rešenja koja nisu "samo još jedan WP sajt". <strong>Performance-optimized,
+                        security-hardened</strong> i potpuno prilagođen admin panel koji možete sami da koristite.
                     </p>
                     <ul class="service-features">
-                        <li><i class="fas fa-check"></i> Custom Theme Development</li>
-                        <li><i class="fas fa-check"></i> Plugin Development</li>
-                        <li><i class="fas fa-check"></i> WP Maintenance & Support</li>
+                        <li><i class="fas fa-check"></i> Custom theme development</li>
+                        <li><i class="fas fa-check"></i> Plugin development</li>
+                        <li><i class="fas fa-check"></i> WooCommerce integracija</li>
+                        <li><i class="fas fa-check"></i> Security & speed optimization</li>
                     </ul>
+                    <div class="service-price">Od €1,000</div>
                 </div>
 
-                <div class="service-card">
+                <div class="service-card" data-aos="fade-up" data-aos-delay="300">
                     <div class="service-icon">
-                        <i class="fas fa-cog"></i>
+                        <i class="fas fa-shield-alt"></i>
                     </div>
-                    <h3 class="service-title">Maintanance & Support</h3>
+                    <h3 class="service-title">Maintenance & Growth</h3>
                     <p class="service-description">
-                        Kontinuirana podrška i održavanje vašeg web sajta kako bi uvek radio besprekorno.
+                        <strong>Nikad nećete biti sami!</strong> Kontinuirano praćenje, security updates, backup,
+                        performance optimization i nove feature-e kako vaš biznis raste.
                     </p>
                     <ul class="service-features">
-                        <li><i class="fas fa-check"></i> 24/7 Technical Support</li>
-                        <li><i class="fas fa-check"></i> Regular Updates</li>
-                        <li><i class="fas fa-check"></i> Security Monitoring</li>
+                        <li><i class="fas fa-check"></i> 24/7 monitoring & podrška</li>
+                        <li><i class="fas fa-check"></i> Dnevni backups</li>
+                        <li><i class="fas fa-check"></i> Security patches</li>
+                        <li><i class="fas fa-check"></i> Performance optimizacija</li>
                     </ul>
+                    <div class="service-price">Od €150/mes</div>
+                </div>
+            </div>
+
+            <!-- CTA After Services -->
+            <div class="cta-box" data-aos="zoom-in">
+                <h3>Ne Vidite Tačno Ono Što Vam Treba?</h3>
+                <p>Svaki projekat je jedinstven. Zakažite BESPLATNU konsultaciju i pričajmo o vašim potrebama!</p>
+                <a href="#contact" class="btn btn-primary btn-large">
+                    <i class="fas fa-calendar-check"></i> Zakažite Besplatnu Konsultaciju
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section id="process" class="process">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-badge">KAKO RADIMO?</span>
+                <h2 class="section-title">Transparentan Proces od Početka do Kraja</h2>
+                <p class="section-subtitle">Bez skrivenih troškova, bez iznenađenja - znate tačno šta dobijate u svakom koraku</p>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item" data-aos="fade-right">
+                    <div class="timeline-number">1</div>
+                    <div class="timeline-content">
+                        <h3>Besplatna Konsultacija (30-60min)</h3>
+                        <p>Upoznajemo se sa vašim biznisom, ciljevima i potrebama. Analiziramo konkurenciju i predlažemo najbolje rešenje. <strong>Potpuno besplatno, bez obaveza!</strong></p>
+                        <div class="timeline-features">
+                            <span><i class="fas fa-check"></i> Analiza potreba</span>
+                            <span><i class="fas fa-check"></i> Competitor research</span>
+                            <span><i class="fas fa-check"></i> Budžet planiranje</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" data-aos="fade-left">
+                    <div class="timeline-number">2</div>
+                    <div class="timeline-content">
+                        <h3>Strategija & Wireframes (3-5 dana)</h3>
+                        <p>Kreiramo detaljnu strategiju i wireframe-e. Dobijate <strong>tačan plan projekta, timeline i fixed-price ponudu</strong> - bez "možda će biti skuplje kasnije".</p>
+                        <div class="timeline-features">
+                            <span><i class="fas fa-check"></i> Sitemap & wireframes</span>
+                            <span><i class="fas fa-check"></i> Feature list</span>
+                            <span><i class="fas fa-check"></i> Fixed-price quote</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" data-aos="fade-right">
+                    <div class="timeline-number">3</div>
+                    <div class="timeline-content">
+                        <h3>Design & Prototip (5-7 dana)</h3>
+                        <p>Dizajniramo moderni, conversion-optimized interfejs. Dobijate <strong>interaktivni prototip</strong> koji možete testirati PRE nego što napišemo prvi red koda!</p>
+                        <div class="timeline-features">
+                            <span><i class="fas fa-check"></i> UI/UX design</span>
+                            <span><i class="fas fa-check"></i> Interaktivni prototip</span>
+                            <span><i class="fas fa-check"></i> Revizije do savršenstva</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" data-aos="fade-left">
+                    <div class="timeline-number">4</div>
+                    <div class="timeline-content">
+                        <h3>Development & Testing (10-15 dana)</h3>
+                        <p>Programiramo vaš projekat sa <strong>čistim, maintainable kodom</strong>. Kontinuirano testiranje na svim uređajima i browser-ima. Redovni update-i o napretku.</p>
+                        <div class="timeline-features">
+                            <span><i class="fas fa-check"></i> Clean code standards</span>
+                            <span><i class="fas fa-check"></i> Continuous testing</span>
+                            <span><i class="fas fa-check"></i> Weekly demos</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" data-aos="fade-right">
+                    <div class="timeline-number">5</div>
+                    <div class="timeline-content">
+                        <h3>Launch & Optimization (2-3 dana)</h3>
+                        <p><strong>Go live!</strong> Deplojujemo vaš projekat, podešavamo analytics, SEO i osiguravamo da sve radi besprekorno. Plus trening kako da koristite sve feature-e.</p>
+                        <div class="timeline-features">
+                            <span><i class="fas fa-check"></i> Production deployment</span>
+                            <span><i class="fas fa-check"></i> Analytics setup</span>
+                            <span><i class="fas fa-check"></i> Team training</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item" data-aos="fade-left">
+                    <div class="timeline-number">6</div>
+                    <div class="timeline-content">
+                        <h3>Ongoing Support & Growth</h3>
+                        <p>Ne ostavljamo vas! <strong>Doživotna podrška</strong> za sve tehničke probleme + opcioni maintenance paketi za continuous improvement i nove feature-e.</p>
+                        <div class="timeline-features">
+                            <span><i class="fas fa-check"></i> 24/7 support</span>
+                            <span><i class="fas fa-check"></i> Free bug fixes</span>
+                            <span><i class="fas fa-check"></i> Growth consulting</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="process-guarantee" data-aos="zoom-in">
+                <div class="guarantee-icon">
+                    <i class="fas fa-certificate"></i>
+                </div>
+                <div class="guarantee-content">
+                    <h3>Naša 100% Garancija Zadovoljstva</h3>
+                    <p>Ako nakon isporuke niste 100% zadovoljni projektom, radimo besplatne revizije dok ne budete.
+                    A ako i dalje niste srećni - <strong>vraćamo vam kompletan novac. Bez pitanja, bez sitnih slova.</strong></p>
                 </div>
             </div>
         </div>
@@ -181,90 +454,115 @@
     <!-- Portfolio Section -->
     <section id="portfolio" class="portfolio">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Naši Projekti</h2>
-                <p class="section-subtitle">Pogledajte neke od naših najnovijih radova</p>
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-badge">DOKAZ KVALITETA</span>
+                <h2 class="section-title">Projekti Koji Govore Umesto Nas</h2>
+                <p class="section-subtitle">Realni rezultati od realnih klijenata - ne photoshop mockupi</p>
             </div>
             <div class="portfolio-filter">
-                <button class="filter-btn active" data-filter="all">Svi</button>
+                <button class="filter-btn active" data-filter="all">Svi Projekti</button>
                 <button class="filter-btn" data-filter="web-app">Web Apps</button>
                 <button class="filter-btn" data-filter="ecommerce">E-Commerce</button>
                 <button class="filter-btn" data-filter="corporate">Corporate</button>
             </div>
             <div class="portfolio-grid">
-                <div class="portfolio-item" data-category="web-app">
+                <div class="portfolio-item" data-category="web-app" data-aos="fade-up">
                     <div class="portfolio-image">
                         <div class="placeholder-image">
                             <i class="fas fa-chart-line"></i>
                         </div>
                         <div class="portfolio-overlay">
-                            <h3>Dashboard Aplikacija</h3>
-                            <p>React + Node.js analytics platform</p>
+                            <h3>Analytics Dashboard</h3>
+                            <p>React + Node.js real-time analytics platform</p>
+                            <div class="portfolio-stats">
+                                <span><i class="fas fa-arrow-up"></i> +85% Performance</span>
+                                <span><i class="fas fa-users"></i> 10K+ Users</span>
+                            </div>
                             <a href="#" class="portfolio-link"><i class="fas fa-external-link-alt"></i></a>
                         </div>
                     </div>
                 </div>
 
-                <div class="portfolio-item" data-category="ecommerce">
+                <div class="portfolio-item" data-category="ecommerce" data-aos="fade-up" data-aos-delay="100">
                     <div class="portfolio-image">
                         <div class="placeholder-image">
                             <i class="fas fa-shopping-bag"></i>
                         </div>
                         <div class="portfolio-overlay">
-                            <h3>Online Prodavnica</h3>
-                            <p>Custom e-commerce sa WooCommerce</p>
+                            <h3>Fashion E-Commerce</h3>
+                            <p>Custom online store sa WooCommerce</p>
+                            <div class="portfolio-stats">
+                                <span><i class="fas fa-chart-line"></i> +120% Sales</span>
+                                <span><i class="fas fa-shopping-cart"></i> 5K+ Orders/mo</span>
+                            </div>
                             <a href="#" class="portfolio-link"><i class="fas fa-external-link-alt"></i></a>
                         </div>
                     </div>
                 </div>
 
-                <div class="portfolio-item" data-category="corporate">
+                <div class="portfolio-item" data-category="corporate" data-aos="fade-up" data-aos-delay="200">
                     <div class="portfolio-image">
                         <div class="placeholder-image">
                             <i class="fas fa-building"></i>
                         </div>
                         <div class="portfolio-overlay">
-                            <h3>Korporativni Sajt</h3>
-                            <p>Profesionalna web prezentacija kompanije</p>
+                            <h3>Corporate Website</h3>
+                            <p>Premium web prezentacija sa CMS-om</p>
+                            <div class="portfolio-stats">
+                                <span><i class="fas fa-bolt"></i> 98 PageSpeed</span>
+                                <span><i class="fas fa-trophy"></i> Awwwards Nominee</span>
+                            </div>
                             <a href="#" class="portfolio-link"><i class="fas fa-external-link-alt"></i></a>
                         </div>
                     </div>
                 </div>
 
-                <div class="portfolio-item" data-category="web-app">
+                <div class="portfolio-item" data-category="web-app" data-aos="fade-up">
                     <div class="portfolio-image">
                         <div class="placeholder-image">
                             <i class="fas fa-calendar-alt"></i>
                         </div>
                         <div class="portfolio-overlay">
-                            <h3>Booking Sistem</h3>
-                            <p>Online sistem za zakazivanje termina</p>
+                            <h3>Booking System</h3>
+                            <p>SaaS booking platform sa payment gateway</p>
+                            <div class="portfolio-stats">
+                                <span><i class="fas fa-clock"></i> Real-time sync</span>
+                                <span><i class="fas fa-calendar-check"></i> 2K+ Bookings/day</span>
+                            </div>
                             <a href="#" class="portfolio-link"><i class="fas fa-external-link-alt"></i></a>
                         </div>
                     </div>
                 </div>
 
-                <div class="portfolio-item" data-category="corporate">
+                <div class="portfolio-item" data-category="ecommerce" data-aos="fade-up" data-aos-delay="100">
                     <div class="portfolio-image">
                         <div class="placeholder-image">
                             <i class="fas fa-utensils"></i>
                         </div>
                         <div class="portfolio-overlay">
-                            <h3>Restoran Website</h3>
-                            <p>Responzivni sajt sa online menijem</p>
+                            <h3>Food Delivery App</h3>
+                            <p>Multi-restaurant ordering platform</p>
+                            <div class="portfolio-stats">
+                                <span><i class="fas fa-motorcycle"></i> Live tracking</span>
+                                <span><i class="fas fa-star"></i> 4.8/5 Rating</span>
+                            </div>
                             <a href="#" class="portfolio-link"><i class="fas fa-external-link-alt"></i></a>
                         </div>
                     </div>
                 </div>
 
-                <div class="portfolio-item" data-category="ecommerce">
+                <div class="portfolio-item" data-category="corporate" data-aos="fade-up" data-aos-delay="200">
                     <div class="portfolio-image">
                         <div class="placeholder-image">
-                            <i class="fas fa-tshirt"></i>
+                            <i class="fas fa-graduation-cap"></i>
                         </div>
                         <div class="portfolio-overlay">
-                            <h3>Fashion Store</h3>
-                            <p>Shopify prodavnica sa custom dizajnom</p>
+                            <h3>E-Learning Platform</h3>
+                            <p>Online education sa video streaming</p>
+                            <div class="portfolio-stats">
+                                <span><i class="fas fa-users"></i> 15K Students</span>
+                                <span><i class="fas fa-book"></i> 200+ Courses</span>
+                            </div>
                             <a href="#" class="portfolio-link"><i class="fas fa-external-link-alt"></i></a>
                         </div>
                     </div>
@@ -273,70 +571,422 @@
         </div>
     </section>
 
-    <!-- About Section -->
-    <section id="about" class="about">
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
         <div class="container">
-            <div class="about-content">
-                <div class="about-text">
-                    <h2 class="section-title">Zašto Izabrati Nas?</h2>
-                    <p class="about-description">
-                        Sa višegodišnjim iskustvom u web development industriji, specijalizovani smo za kreiranje
-                        visokokvalitetnih web rešenja koja pomažu vašem biznisu da raste.
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-badge">TRANSPARENTNE CENE</span>
+                <h2 class="section-title">Paketi Dizajnirani za Svaki Budžet</h2>
+                <p class="section-subtitle">Bez skrivenih troškova. Bez iznenađenja. Znate tačno šta dobijate.</p>
+            </div>
+
+            <div class="pricing-toggle" data-aos="fade-up">
+                <span class="toggle-label">Plaćanje odjednom</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="pricingToggle">
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Mesečne rate <span class="save-badge">Uštedite 15%</span></span>
+            </div>
+
+            <div class="pricing-grid">
+                <div class="pricing-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="pricing-header">
+                        <h3>Starter</h3>
+                        <p>Idealno za startove i male biznise</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="price-amount" data-annual="€990" data-monthly="€110">€990</span>
+                        <span class="price-period">/jednokratno</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Do 5 stranica</li>
+                        <li><i class="fas fa-check"></i> Responsive design</li>
+                        <li><i class="fas fa-check"></i> Kontakt forma</li>
+                        <li><i class="fas fa-check"></i> Basic SEO setup</li>
+                        <li><i class="fas fa-check"></i> Google Analytics</li>
+                        <li><i class="fas fa-check"></i> 30 dana podrške</li>
+                        <li class="disabled"><i class="fas fa-times"></i> E-commerce</li>
+                        <li class="disabled"><i class="fas fa-times"></i> Custom funkcionalnosti</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-outline">Izaberite Paket</a>
+                    <div class="pricing-note">Isporuka: 7-10 dana</div>
+                </div>
+
+                <div class="pricing-card featured" data-aos="fade-up" data-aos-delay="200">
+                    <div class="popular-badge">Najbolji izbor</div>
+                    <div class="pricing-header">
+                        <h3>Professional</h3>
+                        <p>Za ozbiljne biznise koji žele rezultate</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="price-amount" data-annual="€2,490" data-monthly="€265">€2,490</span>
+                        <span class="price-period">/jednokratno</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Do 15 stranica</li>
+                        <li><i class="fas fa-check"></i> Premium responsive design</li>
+                        <li><i class="fas fa-check"></i> Advanced forms & CRM</li>
+                        <li><i class="fas fa-check"></i> Advanced SEO & Marketing</li>
+                        <li><i class="fas fa-check"></i> Analytics & Heatmaps</li>
+                        <li><i class="fas fa-check"></i> 90 dana podrške</li>
+                        <li><i class="fas fa-check"></i> E-commerce (do 50 proizvoda)</li>
+                        <li><i class="fas fa-check"></i> 3 custom funkcionalnosti</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-primary">Izaberite Paket</a>
+                    <div class="pricing-note">Isporuka: 2-3 nedelje</div>
+                </div>
+
+                <div class="pricing-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="pricing-header">
+                        <h3>Enterprise</h3>
+                        <p>Custom rešenja za velike projekte</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="price-amount">Custom</span>
+                        <span class="price-period">/po dogovoru</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Neograničeno stranica</li>
+                        <li><i class="fas fa-check"></i> 100% custom design</li>
+                        <li><i class="fas fa-check"></i> Complex web aplikacija</li>
+                        <li><i class="fas fa-check"></i> Enterprise SEO</li>
+                        <li><i class="fas fa-check"></i> Advanced analytics & BI</li>
+                        <li><i class="fas fa-check"></i> Doživotna podrška</li>
+                        <li><i class="fas fa-check"></i> E-commerce (neograničeno)</li>
+                        <li><i class="fas fa-check"></i> Sve custom funkcionalnosti</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-outline">Kontaktirajte Nas</a>
+                    <div class="pricing-note">Isporuka: Po dogovoru</div>
+                </div>
+            </div>
+
+            <div class="pricing-extras" data-aos="fade-up">
+                <h3>Dodatne Usluge (Add-ons)</h3>
+                <div class="extras-grid">
+                    <div class="extra-item">
+                        <i class="fas fa-blog"></i>
+                        <span>Blog sistem</span>
+                        <strong>+€300</strong>
+                    </div>
+                    <div class="extra-item">
+                        <i class="fas fa-language"></i>
+                        <span>Multi-jezik</span>
+                        <strong>+€400</strong>
+                    </div>
+                    <div class="extra-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>Email marketing</span>
+                        <strong>+€250</strong>
+                    </div>
+                    <div class="extra-item">
+                        <i class="fas fa-video"></i>
+                        <span>Video integracija</span>
+                        <strong>+€200</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-badge">ŠTA KAŽU KLIJENTI</span>
+                <h2 class="section-title">Ne Verujte Samo Nama - Verujte Našim Klijentima</h2>
+                <p class="section-subtitle">Stotine zadovoljnih klijenata koji su transformisali svoje biznise</p>
+            </div>
+
+            <div class="testimonials-carousel">
+                <div class="testimonial-card active" data-aos="fade-up">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">
+                        "Imao sam jako loša iskustva sa programerima pre, ali WebDevPro je bio <strong>potpuno drugačije iskustvo</strong>.
+                        Završili su projekat 2 nedelje pre roka, a prodaja mi je porasla za 140% u prva 3 meseca!
+                        Ne mogu da preporučim dovoljno."
                     </p>
-                    <div class="about-features">
-                        <div class="about-feature">
-                            <div class="feature-icon">
-                                <i class="fas fa-rocket"></i>
-                            </div>
-                            <div class="feature-content">
-                                <h4>Brza Isporuka</h4>
-                                <p>Efikasan development proces sa rokovim koji se poštuju</p>
-                            </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
                         </div>
-                        <div class="about-feature">
-                            <div class="feature-icon">
-                                <i class="fas fa-shield-alt"></i>
-                            </div>
-                            <div class="feature-content">
-                                <h4>Sigurnost</h4>
-                                <p>Vaši podaci i web aplikacija su potpuno zaštićeni</p>
-                            </div>
+                        <div class="author-info">
+                            <h4>Marko Petrović</h4>
+                            <p>Vlasnik, TechStore.rs</p>
                         </div>
-                        <div class="about-feature">
-                            <div class="feature-icon">
-                                <i class="fas fa-headset"></i>
-                            </div>
-                            <div class="feature-content">
-                                <h4>Podrška 24/7</h4>
-                                <p>Uvek smo tu da odgovorimo na vaša pitanja</p>
-                            </div>
+                    </div>
+                    <div class="testimonial-result">
+                        <div class="result-item">
+                            <span class="result-value">+140%</span>
+                            <span class="result-label">Prodaja</span>
                         </div>
-                        <div class="about-feature">
-                            <div class="feature-icon">
-                                <i class="fas fa-dollar-sign"></i>
-                            </div>
-                            <div class="feature-content">
-                                <h4>Pristupačne Cene</h4>
-                                <p>Kvalitetne usluge po konkurentnim cenama</p>
-                            </div>
+                        <div class="result-item">
+                            <span class="result-value">2 ned</span>
+                            <span class="result-label">Pre roka</span>
                         </div>
                     </div>
                 </div>
-                <div class="about-image">
-                    <div class="tech-stack">
-                        <h3>Tehnologije koje koristimo</h3>
-                        <div class="tech-icons">
-                            <div class="tech-item"><i class="fab fa-html5"></i><span>HTML5</span></div>
-                            <div class="tech-item"><i class="fab fa-css3-alt"></i><span>CSS3</span></div>
-                            <div class="tech-item"><i class="fab fa-js"></i><span>JavaScript</span></div>
-                            <div class="tech-item"><i class="fab fa-react"></i><span>React</span></div>
-                            <div class="tech-item"><i class="fab fa-node-js"></i><span>Node.js</span></div>
-                            <div class="tech-item"><i class="fab fa-python"></i><span>Python</span></div>
-                            <div class="tech-item"><i class="fab fa-php"></i><span>PHP</span></div>
-                            <div class="tech-item"><i class="fab fa-wordpress"></i><span>WordPress</span></div>
+
+                <div class="testimonial-card" data-aos="fade-up">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">
+                        "Profesionalizam na <strong>najvišem nivou!</strong> Komunikacija je bila besprekorna,
+                        svaki detalj je perfekcionisan, a sajt izgleda bolje nego što sam zamišljala.
+                        Plus, podrška nakon lansiranja je fenomenalna - odgovaraju u roku od sat vremena!"
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="author-info">
+                            <h4>Ana Jovanović</h4>
+                            <p>CEO, BeautyHub Salon</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-result">
+                        <div class="result-item">
+                            <span class="result-value">5.0</span>
+                            <span class="result-label">★ Rating</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-value">&lt;1h</span>
+                            <span class="result-label">Response</span>
                         </div>
                     </div>
                 </div>
+
+                <div class="testimonial-card" data-aos="fade-up">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">
+                        "Konačno programeri koji <strong>razumeju biznis, a ne samo kod!</strong>
+                        Dali su mi savete koji su mi pomogli da optimizujem ceo sales funnel.
+                        Conversion rate mi je skočio sa 1.2% na 4.8%. ROI je bio višestruk već prvog meseca."
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="author-info">
+                            <h4>Stefan Nikolić</h4>
+                            <p>Founder, FitLife Coaching</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-result">
+                        <div class="result-item">
+                            <span class="result-value">+300%</span>
+                            <span class="result-label">Konverzija</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-value">8x</span>
+                            <span class="result-label">ROI</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-dots">
+                <span class="dot active" data-index="0"></span>
+                <span class="dot" data-index="1"></span>
+                <span class="dot" data-index="2"></span>
+            </div>
+
+            <div class="testimonials-stats" data-aos="fade-up">
+                <div class="stat-box">
+                    <h3>4.9/5.0</h3>
+                    <p>Prosečna Ocena</p>
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <h3>250+</h3>
+                    <p>Zadovoljnih Klijenata</p>
+                </div>
+                <div class="stat-box">
+                    <h3>98.7%</h3>
+                    <p>Satisfaction Rate</p>
+                </div>
+                <div class="stat-box">
+                    <h3>85%</h3>
+                    <p>Return Clients</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-badge">ČESTO POSTAVLJANA PITANJA</span>
+                <h2 class="section-title">Sve Što Vas Zanima - Odgovoreno</h2>
+                <p class="section-subtitle">Ne vidite odgovor? Kontaktirajte nas!</p>
+            </div>
+
+            <div class="faq-grid">
+                <div class="faq-item" data-aos="fade-up">
+                    <div class="faq-question">
+                        <h3>Koliko traje izrada web sajta?</h3>
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Zavisi od kompleksnosti projekta. Osnovni sajt (5-10 stranica) isporučujemo za <strong>7-10 radnih dana</strong>.
+                        E-commerce platforme traju 2-3 nedelje, a kompleksne web aplikacije 4-8 nedelja.
+                        Ali za razliku od konkurencije, mi poštujemo rokove! 98% naših projekata se završi na vreme ili pre roka.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-aos="fade-up" data-aos-delay="100">
+                    <div class="faq-question">
+                        <h3>Da li mogu da platim na rate?</h3>
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p><strong>Apsolutno!</strong> Nudimo fleksibilne opcije plaćanja do 12 mesečnih rata bez kamate.
+                        Možete platiti 30% unapred, 40% po završetku development-a, i 30% pre go-live.
+                        Ili možete izabrati mesečne rate koje se uklapaju u vaš budžet. Nikad nemamo skrivene troškove!</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-aos="fade-up" data-aos-delay="200">
+                    <div class="faq-question">
+                        <h3>Šta je uključeno u cenu?</h3>
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>SVE što je navedeno u paketu + bonus: hosting setup (prvi mesec besplatan),
+                        SSL sertifikat, Google Analytics & Search Console setup, kompresija slika,
+                        performance optimization, backup sistem, i kompletna dokumentacija.
+                        <strong>Bez ikakvih skrivenih troškova!</strong></p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-aos="fade-up">
+                    <div class="faq-question">
+                        <h3>Mogu li sam da ažuriram sajt kasnije?</h3>
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Naravno! Svi naši sajtovi dolaze sa <strong>user-friendly CMS-om</strong> (WordPress, custom admin panel).
+                        Dobijate kompletno video training kako da menjate tekstove, slike, proizvode, blog postove itd.
+                        Plus, prva 3 meseca pružamo besplatnu podršku za sve tehnike probleme!</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-aos="fade-up" data-aos-delay="100">
+                    <div class="faq-question">
+                        <h3>Da li radite SEO?</h3>
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p><strong>Da!</strong> Svi naši sajtovi su SEO-optimized iz starta: clean code, fast loading,
+                        meta tags, schema markup, sitemap, robots.txt. Nudimo i advanced SEO pakete
+                        sa keyword research, link building, content strategijom i monthly reporting od €500/mesec.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-aos="fade-up" data-aos-delay="200">
+                    <div class="faq-question">
+                        <h3>Šta ako mi ne odgovara dizajn?</h3>
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Zato radimo u fazama! Prvo kreiramo wireframes i dobijamo vaš approval.
+                        Zatim radimo design mockup-e - <strong>nudimo neograničene revizije</strong> dok ne budete 100% zadovoljni.
+                        Tek onda počinjemo da kodiramo. Naša 100% garancija zadovoljstva znači da ne plaćate dok niste srećni!</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-aos="fade-up">
+                    <div class="faq-question">
+                        <h3>Da li nudite održavanje sajta?</h3>
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Da! Maintenance paketi počinju od €150/mesec i uključuju: dnevni backups,
+                        security monitoring & updates, performance optimization, content updates (do 2h mesečno),
+                        prioritetnu tehničku podršku i monthly analytics reports.
+                        <strong>Prvi 3 meseca besplatno</strong> uz svaki projekat!</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-aos="fade-up" data-aos-delay="100">
+                    <div class="faq-question">
+                        <h3>Radite li projekte van Srbije?</h3>
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p><strong>Apsolutno!</strong> Radimo sa klijentima iz celog sveta.
+                        Sva komunikacija može biti putem Zoom-a, Slack-a ili email-a.
+                        Prihvatamo plaćanja u EUR, USD preko PayPal, Wise, Revolut ili direktan bank transfer.
+                        Imamo klijente u SAD, UK, Nemačkoj, Australiji...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-cta" data-aos="zoom-in">
+                <h3>Još Uvek Imate Pitanja?</h3>
+                <p>Zakažite besplatnu 30-minutnu konsultaciju i pričajmo uživo!</p>
+                <a href="#contact" class="btn btn-primary">
+                    <i class="fas fa-phone-alt"></i> Zakažite Poziv
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="final-cta">
+        <div class="container">
+            <div class="cta-content" data-aos="zoom-in">
+                <h2>Spremni da Pretvorite Vašu Ideju u Profitabilan Web Projekat?</h2>
+                <p class="cta-subtitle">
+                    Pridružite se sa 250+ zadovoljnih klijenata koji su transformisali svoje biznise sa našim web rešenjima.
+                    <strong>Besplatna konsultacija. Bez obaveza. Garancija povraćaja novca.</strong>
+                </p>
+                <div class="cta-benefits">
+                    <div class="cta-benefit">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Besplatna konsultacija & plan</span>
+                    </div>
+                    <div class="cta-benefit">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Isporuka za 2-4 nedelje</span>
+                    </div>
+                    <div class="cta-benefit">
+                        <i class="fas fa-check-circle"></i>
+                        <span>100% garancija zadovoljstva</span>
+                    </div>
+                    <div class="cta-benefit">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Rate do 12 meseci, 0% kamata</span>
+                    </div>
+                </div>
+                <a href="#contact" class="btn btn-white btn-large pulse-btn">
+                    <i class="fas fa-rocket"></i> Započnite Projekat Danas
+                </a>
+                <p class="cta-note">⏰ Samo 3 slobodna projekta ovog meseca</p>
             </div>
         </div>
     </section>
@@ -344,78 +994,128 @@
     <!-- Contact Section -->
     <section id="contact" class="contact">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Kontaktirajte Nas</h2>
-                <p class="section-subtitle">Spremni smo da pokrenemo vaš projekat!</p>
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-badge">KONTAKTIRAJTE NAS</span>
+                <h2 class="section-title">Započnimo Vaš Projekat</h2>
+                <p class="section-subtitle">Odgovaramo u roku od 2 sata radnim danima!</p>
             </div>
             <div class="contact-content">
                 <div class="contact-info">
-                    <div class="contact-item">
+                    <div class="contact-intro" data-aos="fade-right">
+                        <h3>Razgovarajmo o Vašem Projektu</h3>
+                        <p>Bilo da trebate jednostavan informativni sajt ili kompleksnu web aplikaciju,
+                        tu smo da vam pomognemo. Popunite formu i kontaktiraćemo vas u najkraćem roku!</p>
+                    </div>
+
+                    <div class="contact-item" data-aos="fade-right" data-aos-delay="100">
                         <div class="contact-icon">
                             <i class="fas fa-envelope"></i>
                         </div>
                         <div class="contact-details">
                             <h4>Email</h4>
                             <p>info@webdevpro.com</p>
+                            <span class="response-time">Odgovor u roku od 2h</span>
                         </div>
                     </div>
-                    <div class="contact-item">
+
+                    <div class="contact-item" data-aos="fade-right" data-aos-delay="200">
                         <div class="contact-icon">
                             <i class="fas fa-phone"></i>
                         </div>
                         <div class="contact-details">
-                            <h4>Telefon</h4>
+                            <h4>Telefon / WhatsApp</h4>
                             <p>+381 60 123 4567</p>
+                            <span class="response-time">Pon-Pet: 9:00-18:00</span>
                         </div>
                     </div>
-                    <div class="contact-item">
+
+                    <div class="contact-item" data-aos="fade-right" data-aos-delay="300">
                         <div class="contact-icon">
                             <i class="fas fa-map-marker-alt"></i>
                         </div>
                         <div class="contact-details">
                             <h4>Lokacija</h4>
                             <p>Beograd, Srbija</p>
+                            <span class="response-time">Remote work friendly</span>
                         </div>
                     </div>
-                    <div class="social-links">
+
+                    <div class="social-links" data-aos="fade-right" data-aos-delay="400">
                         <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
                         <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
                         <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
                     </div>
                 </div>
-                <form class="contact-form" id="contactForm">
-                    <div class="form-group">
-                        <input type="text" class="form-input" placeholder="Vaše Ime" required>
-                        <i class="fas fa-user"></i>
+
+                <form class="contact-form" id="contactForm" data-aos="fade-left">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Vaše Ime *</label>
+                            <input type="text" class="form-input" placeholder="Unesite vaše ime" required>
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Adresa *</label>
+                            <input type="email" class="form-input" placeholder="vas@email.com" required>
+                            <i class="fas fa-envelope"></i>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <input type="email" class="form-input" placeholder="Email Adresa" required>
-                        <i class="fas fa-envelope"></i>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Telefon</label>
+                            <input type="tel" class="form-input" placeholder="+381 60 123 4567">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="form-group">
+                            <label>Tip Projekta *</label>
+                            <select class="form-input" required>
+                                <option value="">Izaberite tip projekta</option>
+                                <option value="web-app">Web Aplikacija</option>
+                                <option value="ecommerce">E-Commerce</option>
+                                <option value="corporate">Korporativni Sajt</option>
+                                <option value="wordpress">WordPress</option>
+                                <option value="redesign">Redizajn Postojećeg Sajta</option>
+                                <option value="other">Ostalo</option>
+                            </select>
+                            <i class="fas fa-briefcase"></i>
+                        </div>
                     </div>
+
                     <div class="form-group">
-                        <input type="tel" class="form-input" placeholder="Telefon">
-                        <i class="fas fa-phone"></i>
-                    </div>
-                    <div class="form-group">
-                        <select class="form-input" required>
-                            <option value="">Tip Projekta</option>
-                            <option value="web-app">Web Aplikacija</option>
-                            <option value="ecommerce">E-Commerce</option>
-                            <option value="corporate">Korporativni Sajt</option>
-                            <option value="wordpress">WordPress</option>
-                            <option value="other">Ostalo</option>
+                        <label>Budžet</label>
+                        <select class="form-input">
+                            <option value="">Izaberite budžet</option>
+                            <option value="under-1k">Ispod €1,000</option>
+                            <option value="1k-3k">€1,000 - €3,000</option>
+                            <option value="3k-5k">€3,000 - €5,000</option>
+                            <option value="5k-10k">€5,000 - €10,000</option>
+                            <option value="over-10k">Preko €10,000</option>
                         </select>
-                        <i class="fas fa-briefcase"></i>
+                        <i class="fas fa-euro-sign"></i>
                     </div>
+
                     <div class="form-group">
-                        <textarea class="form-input" rows="5" placeholder="Opišite vaš projekat..." required></textarea>
+                        <label>Opišite Vaš Projekat *</label>
+                        <textarea class="form-input" rows="5" placeholder="Recite nam detaljnije o vašem projektu, ciljevima, i bilo čemu drugom što je važno..." required></textarea>
                         <i class="fas fa-comment"></i>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-submit">
-                        Pošaljite Poruku
+
+                    <div class="form-checkbox">
+                        <input type="checkbox" id="privacy" required>
+                        <label for="privacy">Slažem se sa <a href="#">politikom privatnosti</a> i obradom podataka</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-submit btn-large">
                         <i class="fas fa-paper-plane"></i>
+                        Pošaljite Poruku
                     </button>
+
+                    <p class="form-note">
+                        <i class="fas fa-lock"></i> Vaši podaci su potpuno zaštićeni i neće biti deljeni sa trećim licima
+                    </p>
                 </form>
             </div>
         </div>
@@ -432,7 +1132,12 @@
                     </div>
                     <p class="footer-text">
                         Profesionalne usluge web programiranja za vaš poslovni uspeh.
+                        Pretvaramo vaše ideje u profitabilne web projekte.
                     </p>
+                    <div class="footer-trust">
+                        <i class="fas fa-shield-check"></i>
+                        <span>100% Garancija Zadovoljstva</span>
+                    </div>
                 </div>
                 <div class="footer-section">
                     <h4>Brzi Linkovi</h4>
@@ -440,7 +1145,9 @@
                         <li><a href="#home">Početna</a></li>
                         <li><a href="#services">Usluge</a></li>
                         <li><a href="#portfolio">Portfolio</a></li>
-                        <li><a href="#about">O nama</a></li>
+                        <li><a href="#process">Proces</a></li>
+                        <li><a href="#pricing">Cene</a></li>
+                        <li><a href="#testimonials">Recenzije</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -448,21 +1155,33 @@
                     <ul class="footer-links">
                         <li><a href="#services">Web Aplikacije</a></li>
                         <li><a href="#services">E-Commerce</a></li>
-                        <li><a href="#services">WordPress</a></li>
-                        <li><a href="#services">SEO</a></li>
+                        <li><a href="#services">WordPress Development</a></li>
+                        <li><a href="#services">SEO & Marketing</a></li>
+                        <li><a href="#services">Maintenance & Support</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
                     <h4>Newsletter</h4>
-                    <p class="footer-text">Prijavite se za novosti</p>
+                    <p class="footer-text">Prijavite se za web dev savete, trikove i specijalne ponude!</p>
                     <form class="newsletter-form">
                         <input type="email" placeholder="Vaš email" required>
                         <button type="submit"><i class="fas fa-arrow-right"></i></button>
                     </form>
+                    <div class="footer-social">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
                 </div>
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2024 WebDevPro. Sva prava zadržana.</p>
+                <div class="footer-links-bottom">
+                    <a href="#">Politika Privatnosti</a>
+                    <a href="#">Uslovi Korišćenja</a>
+                    <a href="#">GDPR</a>
+                </div>
             </div>
         </div>
     </footer>
@@ -472,6 +1191,9 @@
         <i class="fas fa-arrow-up"></i>
     </button>
 
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
