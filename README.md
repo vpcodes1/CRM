@@ -4,10 +4,21 @@ AI bot za praćenje cena meme coina u realnom vremenu koristeći DEX Screener AP
 
 ## 🌟 Funkcionalnosti
 
+### Praćenje tokena
 - 📊 **Praćenje cena u realnom vremenu** - Automatsko ažuriranje cena za praćene tokene
 - 💰 **Automatski alerti** - Obaveštenja kada cena promeni iznad određenog praga
 - 📈 **Istorija cena** - Čuvanje i prikaz istorije cena za svaki token
 - 📉 **Statistika** - Min/max/prosečna cena za praćene tokene
+
+### Automatsko pronalaženje tokena (NOVO!)
+- 🔥 **Trending tokeni** - Pronalazi tokene sa najvećim volumenom
+- 🆕 **Novi tokeni** - Automatski pronalazi sveže izašle tokene
+- 🚀 **Top gainers** - Tokeni sa najvećim rastom u 24h
+- 📉 **Top losers** - Tokeni sa najvećim padom u 24h
+- 🤖 **Auto-discovery mod** - Bot automatski pronalazi i prikazuje nove i trending tokene
+- 🛡️ **Sigurnosni filteri** - Automatski filtrira scam tokene (min. likvidnost, volumen)
+
+### Ostalo
 - 🔍 **Pretraga** - Pretraživanje tokena po nazivu ili simbolu
 - 🎯 **DEX Screener integracija** - Direktna integracija sa DEX Screener API-jem
 - 💡 **Interaktivni CLI** - Laka upotreba kroz komandnu liniju
@@ -67,6 +78,8 @@ npm start
 
 Bot koristi interaktivni CLI sa sledećim komandama:
 
+### 🎯 Praćenje tokena
+
 | Komanda | Opis | Primer |
 |---------|------|--------|
 | `add <address>` | Dodaj token za praćenje | `add 0x1234...` |
@@ -74,9 +87,30 @@ Bot koristi interaktivni CLI sa sledećim komandama:
 | `list` | Prikaži sve praćene tokene | `list` |
 | `history <address>` | Prikaži istoriju cena | `history 0x1234... 20` |
 | `stats <address>` | Prikaži statistiku za token | `stats 0x1234...` |
-| `search <query>` | Pretraži tokene | `search PEPE` |
 | `start` | Pokreni automatsko praćenje | `start` |
 | `stop` | Zaustavi automatsko praćenje | `stop` |
+
+### 🔍 Pronalaženje tokena (NOVO!)
+
+| Komanda | Opis | Primer |
+|---------|------|--------|
+| `trending [query]` | Prikaži trending tokene po volumenu | `trending solana` |
+| `new [query] [hours]` | Prikaži nove tokene (default 24h) | `new solana 6` |
+| `gainers [query]` | Prikaži top gainers (24h) | `gainers` |
+| `losers [query]` | Prikaži top losers (24h) | `losers ethereum` |
+| `search <query>` | Pretraži tokene po nazivu | `search PEPE` |
+
+### 🤖 Auto-discovery (NOVO!)
+
+| Komanda | Opis | Primer |
+|---------|------|--------|
+| `discovery-start` | Pokreni automatsko pronalaženje | `discovery-start` |
+| `discovery-stop` | Zaustavi auto-discovery | `discovery-stop` |
+
+### ⚙️ Ostalo
+
+| Komanda | Opis | Primer |
+|---------|------|--------|
 | `clear` | Obriši ekran | `clear` |
 | `help` | Prikaži pomoć | `help` |
 | `exit` / `quit` | Izađi iz bota | `exit` |
@@ -127,7 +161,56 @@ memecoin-bot> list
 ...
 ```
 
-### 4. Automatski alerti
+### 4. Pronalaženje trending tokena (NOVO!)
+```
+memecoin-bot> trending
+
+════════════════════════════════════════════════════════════
+  🔥 TRENDING TOKENI
+════════════════════════════════════════════════════════════
+
+1. 🟢 Bonk (BONK)
+   💵 Cena: $0.00001234
+   📊 24h: +45.23%
+   📈 Volume: $5.67M
+   💧 Likvidnost: $1.23M
+   🔗 Chain: solana | DEX: raydium
+   ⏰ Starost: 15 dana
+   📍 Adresa: DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263
+
+💡 Da dodate token: add <adresa>
+```
+
+### 5. Pronalaženje novih tokena (NOVO!)
+```
+memecoin-bot> new solana 6
+
+════════════════════════════════════════════════════════════
+  🆕 NOVI TOKENI
+════════════════════════════════════════════════════════════
+
+1. 🟢 MoonDog (MDOG)
+   💵 Cena: $0.000045
+   📊 24h: +125.43%
+   📈 Volume: $234.56K
+   💧 Likvidnost: $45.67K
+   🔗 Chain: solana | DEX: raydium
+   ⏰ Starost: 3 sati
+   📍 Adresa: ...
+
+💡 Da dodate token: add <adresa>
+```
+
+### 6. Auto-discovery mod (NOVO!)
+```
+memecoin-bot> discovery-start
+🤖 Auto-discovery pokrenut (interval: 300s)
+
+# Bot sada automatski prikazuje nove i trending tokene svakih 5 minuta!
+# Ne morate ručno da tražite - bot radi za vas!
+```
+
+### 7. Automatski alerti
 Kada cena promeni više od podešenog praga:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -161,6 +244,37 @@ Prag u procentima za prikazivanje alerta. Ako cena promeni više od ovog praga, 
 - `5` - Alert pri promeni ≥5%
 - `10` - Alert pri promeni ≥10%
 - `1` - Alert pri promeni ≥1% (vrlo osetljivo)
+
+### AUTO_DISCOVERY_ENABLED (NOVO!)
+Uključi/isključi automatsko pronalaženje novih tokena.
+
+**Vrednosti:**
+- `true` - Bot automatski prikazuje nove i trending tokene
+- `false` - Isključeno (default)
+
+### DISCOVERY_INTERVAL (NOVO!)
+Interval u milisekundama za auto-discovery provere.
+
+**Preporučene vrednosti:**
+- `300000` - 5 minuta (preporučeno)
+- `600000` - 10 minuta
+- `900000` - 15 minuta
+
+### MIN_LIQUIDITY (NOVO!)
+Minimum likvidnost u USD za sigurnost. Tokeni ispod ovog praga se filtriraju.
+
+**Preporučene vrednosti:**
+- `5000` - $5k minimum (default, preporučeno)
+- `10000` - $10k (konzervativnije)
+- `1000` - $1k (rizičnije)
+
+### MIN_VOLUME_24H (NOVO!)
+Minimum 24h volumen u USD. Tokeni ispod ovog praga se filtriraju.
+
+**Preporučene vrednosti:**
+- `1000` - $1k minimum (default)
+- `5000` - $5k (konzervativnije)
+- `500` - $500 (rizičnije)
 
 ## 🔒 API Limits
 

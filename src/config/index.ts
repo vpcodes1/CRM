@@ -16,11 +16,25 @@ export function loadConfig(): BotConfig {
   const priceChangeAlertThreshold = parseFloat(process.env.PRICE_CHANGE_ALERT_THRESHOLD || '5');
   const defaultChain = process.env.DEFAULT_CHAIN || 'solana';
 
+  // Discovery settings
+  const autoDiscoveryEnabled = process.env.AUTO_DISCOVERY_ENABLED === 'true';
+  const discoveryInterval = parseInt(process.env.DISCOVERY_INTERVAL || '300000', 10); // 5 min default
+  const discoverySearchQuery = process.env.DISCOVERY_SEARCH_QUERY || 'solana';
+  const minLiquidity = parseFloat(process.env.MIN_LIQUIDITY || '5000');
+  const minVolume24h = parseFloat(process.env.MIN_VOLUME_24H || '1000');
+  const maxTokenAgeHours = parseFloat(process.env.MAX_TOKEN_AGE_HOURS || '24');
+
   return {
     tokenAddresses,
     checkInterval,
     priceChangeAlertThreshold,
     defaultChain,
+    autoDiscoveryEnabled,
+    discoveryInterval,
+    discoverySearchQuery,
+    minLiquidity,
+    minVolume24h,
+    maxTokenAgeHours,
   };
 }
 

@@ -74,4 +74,11 @@ export interface BotConfig {
   checkInterval: number;
   priceChangeAlertThreshold: number;
   defaultChain: string;
+  // Discovery settings
+  autoDiscoveryEnabled: boolean;
+  discoveryInterval: number;
+  discoverySearchQuery: string;
+  minLiquidity: number;
+  minVolume24h: number;
+  maxTokenAgeHours: number;
 }
