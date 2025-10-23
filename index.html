@@ -3,11 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
     <meta name="description" content="Profesionalne usluge web programiranja - Kreiramo moderne, responzivne i optimizovane web aplikacije">
+    <meta name="keywords" content="web programiranje, web development, izrada sajta, e-commerce, wordpress, react, node.js, beograd, srbija">
+    <meta name="author" content="WebDevPro">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://webdevpro.com/">
+    <meta property="og:title" content="Web Programiranje | Profesionalne Web Usluge">
+    <meta property="og:description" content="Profesionalne usluge web programiranja - Kreiramo moderne, responzivne i optimizovane web aplikacije">
+    <meta property="og:image" content="https://webdevpro.com/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://webdevpro.com/">
+    <meta property="twitter:title" content="Web Programiranje | Profesionalne Web Usluge">
+    <meta property="twitter:description" content="Profesionalne usluge web programiranja - Kreiramo moderne, responzivne i optimizovane web aplikacije">
+    <meta property="twitter:image" content="https://webdevpro.com/twitter-image.jpg">
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WebDevPro">
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#6366f1">
+
     <title>Web Programiranje | Profesionalne Web Usluge</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
+    <!-- Critical CSS will be inlined here -->
+    <style>
+        /* Critical above-the-fold CSS */
+        body{margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow-x:hidden}
+        .navbar{position:fixed;top:0;left:0;width:100%;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);box-shadow:0 4px 6px -1px rgba(0,0,0,.1);z-index:1000}
+        .hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    </style>
+
+    <!-- Deferred CSS -->
+    <link rel="stylesheet" href="styles.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="styles.css"></noscript>
+
+    <!-- Font Awesome with preload -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+
+    <!-- AOS with preload -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"></noscript>
 </head>
 <body>
     <!-- Floating CTA Button -->
@@ -44,9 +100,20 @@
         </div>
     </nav>
 
-    <!-- Hero Section with Particles -->
+    <!-- Hero Section with Video Background -->
     <section id="home" class="hero">
-        <div id="particles-js"></div>
+        <!-- Video Background -->
+        <div class="video-background">
+            <video autoplay muted loop playsinline id="hero-video" poster="video-poster.jpg">
+                <source src="https://cdn.coverr.co/videos/coverr-abstract-particles-floating/1080p.mp4" type="video/mp4">
+                <!-- Fallback for browsers that don't support video -->
+            </video>
+            <div class="video-overlay"></div>
+        </div>
+
+        <!-- Particles fallback for mobile or if video fails -->
+        <div id="particles-js" class="particles-fallback"></div>
+
         <div class="hero-background">
             <div class="animated-gradient"></div>
         </div>
@@ -1192,8 +1259,74 @@
     </button>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js" defer></script>
+    <script src="script.js" defer></script>
+
+    <!-- PWA Registration -->
+    <script>
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(registration => {
+                        console.log('✅ Service Worker registered successfully:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('❌ Service Worker registration failed:', error);
+                    });
+            });
+        }
+
+        // Install Prompt for PWA
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+
+            // Show custom install button after 5 seconds
+            setTimeout(() => {
+                showInstallPromotion();
+            }, 5000);
+        });
+
+        function showInstallPromotion() {
+            const installBanner = document.createElement('div');
+            installBanner.className = 'pwa-install-banner';
+            installBanner.innerHTML = `
+                <div class="pwa-install-content">
+                    <i class="fas fa-download"></i>
+                    <div>
+                        <strong>Instalirajte našu aplikaciju!</strong>
+                        <p>Brži pristup i offline podrška</p>
+                    </div>
+                    <button class="btn-install-pwa">Instaliraj</button>
+                    <button class="btn-close-pwa"><i class="fas fa-times"></i></button>
+                </div>
+            `;
+            document.body.appendChild(installBanner);
+
+            // Install button click
+            installBanner.querySelector('.btn-install-pwa').addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`User response to install prompt: ${outcome}`);
+                    deferredPrompt = null;
+                    installBanner.remove();
+                }
+            });
+
+            // Close button click
+            installBanner.querySelector('.btn-close-pwa').addEventListener('click', () => {
+                installBanner.remove();
+            });
+
+            // Show banner with animation
+            setTimeout(() => {
+                installBanner.style.transform = 'translateY(0)';
+            }, 100);
+        }
+    </script>
 </body>
 </html>

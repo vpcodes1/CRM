@@ -212,6 +212,40 @@ body {
     overflow: hidden;
 }
 
+/* Video Background */
+.video-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.video-background video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+}
+
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+/* Particles fallback */
 #particles-js {
     position: absolute;
     width: 100%;
@@ -219,6 +253,20 @@ body {
     top: 0;
     left: 0;
     z-index: 0;
+}
+
+.particles-fallback {
+    display: none;
+}
+
+/* Hide video on mobile for performance */
+@media (max-width: 768px) {
+    .video-background video {
+        display: none;
+    }
+    .particles-fallback {
+        display: block;
+    }
 }
 
 .hero-background {
@@ -1988,4 +2036,129 @@ textarea.form-input {
 /* Add smooth transitions for all interactive elements */
 a, button, .btn, .filter-btn, .faq-question {
     transition: all 0.3s ease;
+}
+
+/* ===== PWA INSTALL BANNER ===== */
+.pwa-install-banner {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(200px);
+    z-index: 10000;
+    background: var(--bg-white);
+    box-shadow: var(--shadow-2xl);
+    border-radius: 15px;
+    padding: 1.5rem;
+    max-width: 500px;
+    width: calc(100% - 40px);
+    transition: transform 0.4s ease;
+}
+
+.pwa-install-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.pwa-install-content i.fa-download {
+    font-size: 2rem;
+    color: var(--primary-color);
+}
+
+.pwa-install-content > div {
+    flex: 1;
+}
+
+.pwa-install-content strong {
+    display: block;
+    font-size: 1.1rem;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+}
+
+.pwa-install-content p {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.btn-install-pwa {
+    padding: 0.75rem 1.5rem;
+    background: var(--gradient-primary);
+    color: var(--text-white);
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.btn-install-pwa:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-close-pwa {
+    background: transparent;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    padding: 0.5rem;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+.btn-close-pwa:hover {
+    color: var(--text-dark);
+}
+
+@media (max-width: 576px) {
+    .pwa-install-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .btn-install-pwa {
+        width: 100%;
+    }
+}
+
+/* ===== IMAGE LAZY LOADING BLUR EFFECT ===== */
+img[data-src] {
+    filter: blur(10px);
+    transition: filter 0.3s ease;
+}
+
+img[data-src].loaded {
+    filter: blur(0);
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+/* Use will-change for elements that will animate */
+.service-card,
+.benefit-card,
+.portfolio-item,
+.pricing-card,
+.testimonial-card {
+    will-change: transform, opacity;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Dark mode support (for future) */
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Dark mode colors can be defined here in the future */
+    }
 }
