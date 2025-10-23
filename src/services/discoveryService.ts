@@ -25,21 +25,79 @@ export class DiscoveryService {
     minVolume24h: 1000,    // Minimum $1k volume
   };
 
+  // Popularne meme coin kategorije i termini za pretragu
+  private memeSearchTerms = [
+    // Popularne kategorije
+    'doge', 'shib', 'pepe', 'wojak', 'chad', 'apu', 'meme',
+    // Solana memecoins
+    'bonk', 'wif', 'popcat', 'mew', 'mother', 'tremp', 'boden',
+    // Ethereum memecoins
+    'floki', 'elon', 'shiba', 'dogecoin', 'kishu',
+    // Novi trendovi
+    'cat', 'dog', 'frog', 'based', 'moon', 'inu'
+  ];
+
   constructor() {
     this.dexService = new DexScreenerService();
+  }
+
+  /**
+   * Multi-search - pretražuje više termina i kombinuje rezultate
+   */
+  private async multiSearch(
+    searchTerms: string[],
+    maxResults: number = 100
+  ): Promise<DexPair[]> {
+    const allPairs: DexPair[] = [];
+    const seenAddresses = new Set<string>();
+
+    // Pretraga svakog termina
+    for (const term of searchTerms.slice(0, 10)) { // Ograniči na 10 termina da ne pređemo rate limit
+      try {
+        const pairs = await this.dexService.searchTokens(term);
+
+        // Dodaj samo unique parove
+        for (const pair of pairs) {
+          const key = `${pair.chainId}-${pair.baseToken.address}`;
+          if (!seenAddresses.has(key)) {
+            seenAddresses.add(key);
+            allPairs.push(pair);
+          }
+        }
+
+        // Mala pauza između pretraga
+        await this.sleep(300);
+
+        if (allPairs.length >= maxResults) {
+          break;
+        }
+      } catch (error) {
+        console.error(`Greška pri pretrazi termina "${term}":`, error);
+      }
+    }
+
+    return allPairs;
   }
 
   /**
    * Pronađi trending tokene (po volumenu)
    */
   async findTrending(
-    searchQuery: string = 'meme',
+    searchQuery: string = 'auto',
     limit: number = 10,
     filters: DiscoveryFilters = {}
   ): Promise<DexPair[]> {
-    console.log(`🔍 Tražim trending tokene (${searchQuery})...`);
+    console.log(`🔍 Tražim trending meme tokene...`);
 
-    const pairs = await this.dexService.searchTokens(searchQuery);
+    let pairs: DexPair[] = [];
+
+    // Ako je "auto", koristi multi-search sa meme terminima
+    if (searchQuery === 'auto' || searchQuery === 'meme' || searchQuery === 'solana' || searchQuery === 'ethereum') {
+      pairs = await this.multiSearch(this.memeSearchTerms, 100);
+    } else {
+      // Ako korisnik unese konkretan termin, traži samo to
+      pairs = await this.dexService.searchTokens(searchQuery);
+    }
 
     if (pairs.length === 0) {
       console.log('❌ Nema pronađenih tokena.');
@@ -63,14 +121,21 @@ export class DiscoveryService {
    * Pronađi nove tokene (sveže listinzi)
    */
   async findNew(
-    searchQuery: string = 'solana',
+    searchQuery: string = 'auto',
     maxAgeHours: number = 24,
     limit: number = 10,
     filters: DiscoveryFilters = {}
   ): Promise<DexPair[]> {
-    console.log(`🆕 Tražim nove tokene (mlađe od ${maxAgeHours}h)...`);
+    console.log(`🆕 Tražim nove meme tokene (mlađe od ${maxAgeHours}h)...`);
 
-    const pairs = await this.dexService.searchTokens(searchQuery);
+    let pairs: DexPair[] = [];
+
+    // Ako je "auto", koristi multi-search
+    if (searchQuery === 'auto' || searchQuery === 'meme' || searchQuery === 'solana' || searchQuery === 'ethereum') {
+      pairs = await this.multiSearch(this.memeSearchTerms, 100);
+    } else {
+      pairs = await this.dexService.searchTokens(searchQuery);
+    }
 
     if (pairs.length === 0) {
       return [];
@@ -101,13 +166,20 @@ export class DiscoveryService {
    * Pronađi top gainers (najveći rast)
    */
   async findGainers(
-    searchQuery: string = 'solana',
+    searchQuery: string = 'auto',
     limit: number = 10,
     filters: DiscoveryFilters = {}
   ): Promise<DexPair[]> {
-    console.log(`🚀 Tražim top gainers...`);
+    console.log(`🚀 Tražim top meme gainers...`);
 
-    const pairs = await this.dexService.searchTokens(searchQuery);
+    let pairs: DexPair[] = [];
+
+    // Ako je "auto", koristi multi-search
+    if (searchQuery === 'auto' || searchQuery === 'meme' || searchQuery === 'solana' || searchQuery === 'ethereum') {
+      pairs = await this.multiSearch(this.memeSearchTerms, 100);
+    } else {
+      pairs = await this.dexService.searchTokens(searchQuery);
+    }
 
     if (pairs.length === 0) {
       return [];
@@ -135,13 +207,20 @@ export class DiscoveryService {
    * Pronađi top losers (najveći pad)
    */
   async findLosers(
-    searchQuery: string = 'solana',
+    searchQuery: string = 'auto',
     limit: number = 10,
     filters: DiscoveryFilters = {}
   ): Promise<DexPair[]> {
-    console.log(`📉 Tražim top losers...`);
+    console.log(`📉 Tražim top meme losers...`);
 
-    const pairs = await this.dexService.searchTokens(searchQuery);
+    let pairs: DexPair[] = [];
+
+    // Ako je "auto", koristi multi-search
+    if (searchQuery === 'auto' || searchQuery === 'meme' || searchQuery === 'solana' || searchQuery === 'ethereum') {
+      pairs = await this.multiSearch(this.memeSearchTerms, 100);
+    } else {
+      pairs = await this.dexService.searchTokens(searchQuery);
+    }
 
     if (pairs.length === 0) {
       return [];
@@ -303,5 +382,12 @@ export class DiscoveryService {
     }
 
     return tips;
+  }
+
+  /**
+   * Sleep helper
+   */
+  private sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 }

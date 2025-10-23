@@ -135,9 +135,9 @@ class MemecoinBot {
           minVolume24h: config.minVolume24h,
         };
 
-        // Pronađi nove tokene
+        // Pronađi nove tokene - koristi 'auto' za multi-search
         const newTokens = await this.discoveryService.findNew(
-          config.discoverySearchQuery,
+          'auto',
           config.maxTokenAgeHours,
           5,
           filters
@@ -146,14 +146,14 @@ class MemecoinBot {
         if (newTokens.length > 0) {
           const output = this.discoveryService.formatDiscoveryResults(
             newTokens,
-            '🆕 NOVI TOKENI'
+            '🆕 NOVI MEME TOKENI'
           );
           console.log(output);
         }
 
-        // Pronađi top gainers
+        // Pronađi top gainers - koristi 'auto' za multi-search
         const gainers = await this.discoveryService.findGainers(
-          config.discoverySearchQuery,
+          'auto',
           5,
           filters
         );
@@ -161,7 +161,7 @@ class MemecoinBot {
         if (gainers.length > 0) {
           const output = this.discoveryService.formatDiscoveryResults(
             gainers,
-            '🚀 TOP GAINERS'
+            '🚀 TOP MEME GAINERS'
           );
           console.log(output);
         }
@@ -274,21 +274,21 @@ class MemecoinBot {
 
       case 'trending':
         {
-          const searchQuery = args.length > 0 ? args.join(' ') : 'solana';
+          const searchQuery = args.length > 0 ? args.join(' ') : 'auto';
           const config = loadConfig();
           const filters = {
             minLiquidity: config.minLiquidity,
             minVolume24h: config.minVolume24h,
           };
           const trending = await this.discoveryService.findTrending(searchQuery, 10, filters);
-          const output = this.discoveryService.formatDiscoveryResults(trending, '🔥 TRENDING TOKENI');
+          const output = this.discoveryService.formatDiscoveryResults(trending, '🔥 TRENDING MEME TOKENI');
           console.log(output);
         }
         break;
 
       case 'new':
         {
-          const searchQuery = args.length > 0 ? args[0] : 'solana';
+          const searchQuery = args.length > 0 ? args[0] : 'auto';
           const maxAge = args.length > 1 ? parseInt(args[1], 10) : 24;
           const config = loadConfig();
           const filters = {
@@ -296,35 +296,35 @@ class MemecoinBot {
             minVolume24h: config.minVolume24h,
           };
           const newTokens = await this.discoveryService.findNew(searchQuery, maxAge, 10, filters);
-          const output = this.discoveryService.formatDiscoveryResults(newTokens, '🆕 NOVI TOKENI');
+          const output = this.discoveryService.formatDiscoveryResults(newTokens, '🆕 NOVI MEME TOKENI');
           console.log(output);
         }
         break;
 
       case 'gainers':
         {
-          const searchQuery = args.length > 0 ? args.join(' ') : 'solana';
+          const searchQuery = args.length > 0 ? args.join(' ') : 'auto';
           const config = loadConfig();
           const filters = {
             minLiquidity: config.minLiquidity,
             minVolume24h: config.minVolume24h,
           };
           const gainers = await this.discoveryService.findGainers(searchQuery, 10, filters);
-          const output = this.discoveryService.formatDiscoveryResults(gainers, '🚀 TOP GAINERS');
+          const output = this.discoveryService.formatDiscoveryResults(gainers, '🚀 TOP MEME GAINERS');
           console.log(output);
         }
         break;
 
       case 'losers':
         {
-          const searchQuery = args.length > 0 ? args.join(' ') : 'solana';
+          const searchQuery = args.length > 0 ? args.join(' ') : 'auto';
           const config = loadConfig();
           const filters = {
             minLiquidity: config.minLiquidity,
             minVolume24h: config.minVolume24h,
           };
           const losers = await this.discoveryService.findLosers(searchQuery, 10, filters);
-          const output = this.discoveryService.formatDiscoveryResults(losers, '📉 TOP LOSERS');
+          const output = this.discoveryService.formatDiscoveryResults(losers, '📉 TOP MEME LOSERS');
           console.log(output);
         }
         break;
@@ -409,15 +409,15 @@ class MemecoinBot {
   start                  - Pokreni automatsko praćenje
   stop                   - Zaustavi automatsko praćenje
 
-🔍 PRONALAŽENJE TOKENA:
-  trending [query]       - Prikaži trending tokene (po volumenu)
-  new [query] [hours]    - Prikaži nove tokene (default: 24h)
-  gainers [query]        - Prikaži top gainers (24h)
-  losers [query]         - Prikaži top losers (24h)
-  search <query>         - Pretraži tokene po nazivu/simbolu
+🔍 PRONALAŽENJE MEME TOKENA (AUTO-SMART SEARCH):
+  trending               - Trending memecoins (pepe, doge, shib, bonk, wif...)
+  new [hours]            - Novi memecoins (default: 24h)
+  gainers                - Top meme gainers (24h rast)
+  losers                 - Top meme losers (24h pad)
+  search <query>         - Pretraži konkretni token
 
 🤖 AUTO-DISCOVERY:
-  discovery-start        - Pokreni automatsko pronalaženje novih tokena
+  discovery-start        - Bot automatski prikazuje nove memecoins!
   discovery-stop         - Zaustavi auto-discovery
 
 ⚙️  OSTALO:
@@ -426,18 +426,17 @@ class MemecoinBot {
   exit / quit            - Izađi iz bota
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-💡 SAVETI:
-  • trending - Prikazuje tokene sa najvećim volumenom
-  • new - Pronalazi sveže izašle tokene (mlađe od N sati)
-  • gainers - Tokeni sa najvećim rastom u 24h
-  • Auto-discovery - Automatski prikazuje nove i trending tokene
-  • Sve komande imaju filtre za sigurnost (min. likvidnost, volumen)
+💡 KAKO RADI:
+  • Bot automatski traži popularne meme termine (doge, pepe, shib, bonk...)
+  • Ne moraš da znaš tačne nazive - bot pronalazi sve memecoins!
+  • Automatski filtrira scam tokene (min. likvidnost, volumen)
+  • Prikazuje tokene sa SVIH chain-ova (Solana, Ethereum, BSC...)
 
 📝 PRIMERI:
-  trending              - Trending solana tokeni
-  trending ethereum     - Trending ethereum tokeni
-  new solana 6          - Novi solana tokeni mlađi od 6h
-  gainers               - Top gainers na solana
+  trending              - Prikaži trending memecoins (ALL chains)
+  new 6                 - Novi memecoins mlađi od 6h
+  gainers               - Koji memecoins najviše rastu
+  discovery-start       - Pusti bota da radi za tebe!
     `);
   }
 
