@@ -309,25 +309,41 @@ CRM/
 
 ## 🐛 Troubleshooting
 
-### "Rate limit dostignut"
-- Povećajte `CHECK_INTERVAL` u .env fajlu
-- Smanjite broj praćenih tokena
+### ❌ Greška: "Cannot find module 'dist/index.js'"
 
-### "Token nije pronađen"
-- Proverite da li je adresa tokena ispravna
-- Uverite se da token postoji na DEX Screener-u
-- Proverite da li pratite token na pravom chain-u
+**Problem:** Projekat nije build-ovan ili `dist` folder ne postoji.
 
-### Bot se ne pokreće
+**Rešenje:**
 ```bash
-# Proverite da li su zavisnosti instalirane
+# U folderu projekta:
 npm install
+npm run build
+npm start
+```
 
-# Pokrenite build
+### 📖 Detaljni troubleshooting
+
+Za sve greške i probleme, pogledajte: **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)**
+
+Uključuje:
+- ✅ Cannot find module errors
+- ✅ Build errors
+- ✅ Node.js version issues
+- ✅ Mac M1/M2 specifična rešenja
+- ✅ Kompletan restart guide
+
+### Brze provere:
+
+```bash
+# Proveri verzije
+node --version   # Treba biti v16+
+npm --version
+
+# Build projekat
 npm run build
 
-# Pokrenite u dev modu za više informacija
-npm run dev
+# Proveri da li dist postoji
+ls dist/
 ```
 
 ## 🤝 Doprinos
