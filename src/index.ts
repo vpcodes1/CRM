@@ -5,6 +5,7 @@ import { PriceTrackerService } from './services/priceTracker';
 import { AlertService } from './services/alertService';
 import { DexScreenerService } from './services/dexscreener';
 import { DiscoveryService } from './services/discoveryService';
+import { PumpFunService } from './services/pumpfun';
 import { loadConfig, validateConfig } from './config';
 
 /**
@@ -15,6 +16,7 @@ class MemecoinBot {
   private alertService: AlertService;
   private dexService: DexScreenerService;
   private discoveryService: DiscoveryService;
+  private pumpFunService: PumpFunService;
   private intervalId?: NodeJS.Timeout;
   private discoveryIntervalId?: NodeJS.Timeout;
   private isRunning: boolean = false;
@@ -26,6 +28,7 @@ class MemecoinBot {
     this.alertService = new AlertService();
     this.dexService = new DexScreenerService();
     this.discoveryService = new DiscoveryService();
+    this.pumpFunService = new PumpFunService();
     this.rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
@@ -350,6 +353,43 @@ class MemecoinBot {
         }
         break;
 
+      case 'pump':
+      case 'pumpfun':
+        {
+          console.log('🚀 Preuzimam najnovije tokene sa Pump.fun...\n');
+          const limit = args.length > 0 ? parseInt(args[0], 10) : 15;
+          const tokens = await this.pumpFunService.getNewestTokens(limit);
+          const output = this.pumpFunService.formatTokenList(tokens, '🚀 PUMP.FUN - NAJNOVIJI TOKENI');
+          console.log(output);
+        }
+        break;
+
+      case 'pump-trending':
+        {
+          console.log('🔥 Preuzimam trending tokene sa Pump.fun...\n');
+          const limit = args.length > 0 ? parseInt(args[0], 10) : 15;
+          const tokens = await this.pumpFunService.getTrendingTokens(limit);
+          const output = this.pumpFunService.formatTokenList(tokens, '🔥 PUMP.FUN - TRENDING');
+          console.log(output);
+        }
+        break;
+
+      case 'pump-new':
+        {
+          console.log('⚡ Preuzimam ultra-nove tokene sa Pump.fun...\n');
+          const hours = args.length > 0 ? parseInt(args[0], 10) : 1;
+          const allTokens = await this.pumpFunService.getNewestTokens(50);
+          const filtered = this.pumpFunService.filterByAge(allTokens, hours);
+          const output = this.pumpFunService.formatTokenList(filtered, `⚡ PUMP.FUN - NOVI (< ${hours}h)`);
+          console.log(output);
+
+          if (filtered.length > 0) {
+            console.log('💡 TIP: Pump.fun tokeni su na Solana chain-u');
+            console.log('💡 Možete ih dodati: add <mint_adresa>\n');
+          }
+        }
+        break;
+
       case 'discovery-start':
         {
           const config = loadConfig();
@@ -438,6 +478,11 @@ class MemecoinBot {
   losers                 - Top meme losers (24h pad)
   search <query>         - Pretraži konkretni token
 
+🚀 PUMP.FUN (Solana Launchpad):
+  pump [limit]           - Najnoviji tokeni sa Pump.fun
+  pump-trending [limit]  - Trending tokeni sa Pump.fun
+  pump-new [hours]       - Ultra-novi Pump.fun tokeni (< Nh)
+
 🤖 AUTO-DISCOVERY:
   discovery-start        - Bot automatski prikazuje nove memecoins!
   discovery-stop         - Zaustavi auto-discovery
@@ -449,15 +494,16 @@ class MemecoinBot {
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 💡 KAKO RADI:
-  • Bot automatski traži popularne meme termine (doge, pepe, shib, bonk...)
-  • Ne moraš da znaš tačne nazive - bot pronalazi sve memecoins!
+  • Bot koristi DVA izvora: DEX Screener + Pump.fun
+  • DEX Screener = svi chain-ovi (Solana, Ethereum, BSC...)
+  • Pump.fun = Solana launchpad sa najnovijim tokenima
   • Automatski filtrira scam tokene (min. likvidnost, volumen)
-  • Prikazuje tokene sa SVIH chain-ova (Solana, Ethereum, BSC...)
 
 📝 PRIMERI:
-  trending              - Prikaži trending memecoins (ALL chains)
-  new 6                 - Novi memecoins mlađi od 6h
-  newest                - ⚡ Tek izašli tokeni (< 1h) - risky ali profitabilno!
+  trending              - Prikaži trending memecoins (DEX Screener)
+  pump                  - Najnoviji tokeni sa Pump.fun (Solana)
+  pump-new 1            - Ultra-novi Pump.fun tokeni (< 1h)
+  newest                - ⚡ Tek izašli tokeni (< 1h) - RISKY!
   gainers               - Koji memecoins najviše rastu
   discovery-start       - Pusti bota da radi za tebe!
     `);
