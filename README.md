@@ -1,6 +1,25 @@
 # 🚀 Memecoin Bot - DEX Screener Tracker
 
-AI bot za praćenje cena meme coina u realnom vremenu koristeći DEX Screener API.
+AI bot za praćenje cena meme coina u realnom vremenu koristeći DEX Screener API + Pump.fun.
+
+---
+
+## ⚡ QUICK START
+
+### ❌ Problem: "Cannot find module dist/index.js"?
+
+**Rešenje je JEDNOSTAVNO:**
+
+```bash
+cd /path/to/projekat
+npm install
+npm run build    # ← NAJVAŽNIJE! Kreira dist/ folder
+npm start
+```
+
+📖 **Detaljno:** [QUICK_FIX.md](./QUICK_FIX.md) | **Automatski:** `./setup.sh`
+
+---
 
 ## 🌟 Funkcionalnosti
 
