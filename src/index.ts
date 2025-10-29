@@ -301,6 +301,27 @@ class MemecoinBot {
         }
         break;
 
+      case 'newest':
+      case 'ultra-new':
+        {
+          console.log('⚡ Tražim ULTRA-NOVE tokene (mlađe od 1h)...\n');
+          const config = loadConfig();
+          // Niži filteri za veoma nove tokene
+          const filters = {
+            minLiquidity: 2000,  // $2k minimum za nove tokene
+            minVolume24h: 500,   // $500 minimum volume
+          };
+          const newestTokens = await this.discoveryService.findNew('auto', 1, 15, filters);
+          const output = this.discoveryService.formatDiscoveryResults(newestTokens, '⚡ ULTRA-NOVI TOKENI (< 1h)');
+          console.log(output);
+
+          if (newestTokens.length > 0) {
+            console.log('⚠️  UPOZORENJE: Ovi tokeni su VEOMA novi - EKSTREMNO RIZIČNI!');
+            console.log('⚠️  Mogu biti pump & dump ili rug pull. Budite VEOMA oprezni!\n');
+          }
+        }
+        break;
+
       case 'gainers':
         {
           const searchQuery = args.length > 0 ? args.join(' ') : 'auto';
@@ -412,6 +433,7 @@ class MemecoinBot {
 🔍 PRONALAŽENJE MEME TOKENA (AUTO-SMART SEARCH):
   trending               - Trending memecoins (pepe, doge, shib, bonk, wif...)
   new [hours]            - Novi memecoins (default: 24h)
+  newest                 - ⚡ ULTRA-NOVI tokeni (< 1h) - VEOMA RIZIČNO!
   gainers                - Top meme gainers (24h rast)
   losers                 - Top meme losers (24h pad)
   search <query>         - Pretraži konkretni token
@@ -435,6 +457,7 @@ class MemecoinBot {
 📝 PRIMERI:
   trending              - Prikaži trending memecoins (ALL chains)
   new 6                 - Novi memecoins mlađi od 6h
+  newest                - ⚡ Tek izašli tokeni (< 1h) - risky ali profitabilno!
   gainers               - Koji memecoins najviše rastu
   discovery-start       - Pusti bota da radi za tebe!
     `);
