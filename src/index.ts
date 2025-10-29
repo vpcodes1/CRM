@@ -6,6 +6,7 @@ import { AlertService } from './services/alertService';
 import { DexScreenerService } from './services/dexscreener';
 import { DiscoveryService } from './services/discoveryService';
 import { PumpFunService } from './services/pumpfun';
+import { SolanaService } from './services/solana';
 import { loadConfig, validateConfig } from './config';
 
 /**
@@ -17,6 +18,7 @@ class MemecoinBot {
   private dexService: DexScreenerService;
   private discoveryService: DiscoveryService;
   private pumpFunService: PumpFunService;
+  private solanaService: SolanaService;
   private intervalId?: NodeJS.Timeout;
   private discoveryIntervalId?: NodeJS.Timeout;
   private isRunning: boolean = false;
@@ -29,6 +31,7 @@ class MemecoinBot {
     this.dexService = new DexScreenerService();
     this.discoveryService = new DiscoveryService();
     this.pumpFunService = new PumpFunService();
+    this.solanaService = new SolanaService();
     this.rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
@@ -353,6 +356,44 @@ class MemecoinBot {
         }
         break;
 
+      case 'sol-new':
+      case 'solana-new':
+        {
+          console.log('🌟 Tražim najnovije Solana tokene...\n');
+          const maxAge = args.length > 0 ? parseInt(args[0], 10) : 24;
+          const tokens = await this.solanaService.getNewestTokens(maxAge);
+          const output = this.solanaService.formatTokens(tokens, `🌟 NAJNOVIJI SOLANA TOKENI (< ${maxAge}h)`);
+          console.log(output);
+
+          if (maxAge <= 1 && tokens.length > 0) {
+            console.log('⚠️  UPOZORENJE: Veoma novi tokeni - EKSTREMNO RIZIČNI!');
+            console.log('⚠️  Mogu biti pump & dump ili rug pull. Budite VEOMA oprezni!\n');
+          }
+        }
+        break;
+
+      case 'sol-trending':
+      case 'solana-trending':
+        {
+          console.log('🔥 Tražim trending Solana tokene...\n');
+          const limit = args.length > 0 ? parseInt(args[0], 10) : 20;
+          const tokens = await this.solanaService.getTrendingTokens(limit);
+          const output = this.solanaService.formatTokens(tokens, '🔥 TRENDING SOLANA TOKENI');
+          console.log(output);
+        }
+        break;
+
+      case 'sol-gainers':
+      case 'solana-gainers':
+        {
+          console.log('🚀 Tražim top Solana gainers...\n');
+          const limit = args.length > 0 ? parseInt(args[0], 10) : 20;
+          const tokens = await this.solanaService.getTopGainers(limit);
+          const output = this.solanaService.formatTokens(tokens, '🚀 TOP SOLANA GAINERS (24h)');
+          console.log(output);
+        }
+        break;
+
       case 'pump':
       case 'pumpfun':
         {
@@ -478,6 +519,11 @@ class MemecoinBot {
   losers                 - Top meme losers (24h pad)
   search <query>         - Pretraži konkretni token
 
+☀️ SOLANA TOKENI (DIREKTNO):
+  sol-new [hours]        - 🌟 Najnoviji Solana tokeni (default: 24h)
+  sol-trending [limit]   - 🔥 Trending Solana tokeni po volumenu
+  sol-gainers [limit]    - 🚀 Top Solana gainers (24h rast)
+
 🚀 PUMP.FUN (Solana Launchpad):
   pump [limit]           - Najnoviji tokeni sa Pump.fun
   pump-trending [limit]  - Trending tokeni sa Pump.fun
@@ -500,6 +546,9 @@ class MemecoinBot {
   • Automatski filtrira scam tokene (min. likvidnost, volumen)
 
 📝 PRIMERI:
+  sol-new 1             - ☀️ Najnoviji Solana tokeni (< 1h)
+  sol-trending          - ☀️ Trending Solana tokeni
+  sol-gainers           - ☀️ Top Solana gainers
   trending              - Prikaži trending memecoins (DEX Screener)
   pump                  - Najnoviji tokeni sa Pump.fun (Solana)
   pump-new 1            - Ultra-novi Pump.fun tokeni (< 1h)

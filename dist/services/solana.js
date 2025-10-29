@@ -1,0 +1,231 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SolanaService = void 0;
+const axios_1 = __importDefault(require("axios"));
+/**
+ * Solana Token Service
+ * Koristi više izvora za pronalaženje Solana tokena
+ */
+class SolanaService {
+    constructor() {
+        this.api = axios_1.default.create({
+            timeout: 15000,
+        });
+        this.dexScreenerApi = axios_1.default.create({
+            baseURL: 'https://api.dexscreener.com',
+            timeout: 15000,
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'Accept': 'application/json',
+            },
+        });
+    }
+    /**
+     * Preuzmi najnovije tokene na Solana chain-u
+     * Koristi DEX Screener "trending" kao proxy za nove tokene
+     */
+    async getNewestTokens(maxAgeHours = 24) {
+        try {
+            // DEX Screener ima endpoint za popularne tokene
+            // Filtriramo po starosti nakon što ih dobijemo
+            const response = await this.dexScreenerApi.get('/latest/dex/search', {
+                params: {
+                    q: 'SOL', // Search za Solana parove
+                },
+            });
+            if (!response.data || !response.data.pairs) {
+                return [];
+            }
+            const pairs = response.data.pairs;
+            // Filtriraj samo Solana chain
+            const solanaPairs = pairs.filter(pair => pair.chainId === 'solana');
+            // Filtriraj po starosti
+            const now = Date.now();
+            const maxAgeMs = maxAgeHours * 60 * 60 * 1000;
+            const newPairs = solanaPairs.filter(pair => {
+                if (!pair.pairCreatedAt)
+                    return false;
+                const age = now - pair.pairCreatedAt;
+                return age <= maxAgeMs;
+            });
+            // Sortiraj po vremenu kreiranja (najnoviji prvi)
+            return newPairs.sort((a, b) => (b.pairCreatedAt || 0) - (a.pairCreatedAt || 0));
+        }
+        catch (error) {
+            console.error('❌ Greška pri preuzimanju novih Solana tokena:', error.message);
+            return [];
+        }
+    }
+    /**
+     * Preuzmi trending Solana tokene (po volumenu)
+     */
+    async getTrendingTokens(limit = 20) {
+        try {
+            // Pretraga popularnih Solana memecoins
+            const searchTerms = ['sol', 'bonk', 'wif', 'pepe', 'doge'];
+            const allPairs = [];
+            const seenAddresses = new Set();
+            for (const term of searchTerms) {
+                try {
+                    const response = await this.dexScreenerApi.get('/latest/dex/search', {
+                        params: { q: term },
+                    });
+                    if (response.data && response.data.pairs) {
+                        const pairs = response.data.pairs
+                            .filter((p) => p.chainId === 'solana')
+                            .filter((p) => !seenAddresses.has(p.baseToken.address));
+                        pairs.forEach((p) => {
+                            seenAddresses.add(p.baseToken.address);
+                            allPairs.push(p);
+                        });
+                    }
+                    // Pauza između poziva
+                    await this.sleep(500);
+                }
+                catch (err) {
+                    console.error(`Greška pri pretrazi "${term}":`, err);
+                }
+            }
+            // Sortiraj po volumenu
+            const sorted = allPairs.sort((a, b) => {
+                const volA = a.volume?.h24 || 0;
+                const volB = b.volume?.h24 || 0;
+                return volB - volA;
+            });
+            return sorted.slice(0, limit);
+        }
+        catch (error) {
+            console.error('❌ Greška pri preuzimanju trending tokena:', error.message);
+            return [];
+        }
+    }
+    /**
+     * Preuzmi top gainers na Solana
+     */
+    async getTopGainers(limit = 20) {
+        try {
+            const trending = await this.getTrendingTokens(50);
+            // Filtriraj samo pozitivne promene
+            const gainers = trending.filter(pair => {
+                return pair.priceChange?.h24 && pair.priceChange.h24 > 0;
+            });
+            // Sortiraj po % promeni
+            const sorted = gainers.sort((a, b) => {
+                const changeA = a.priceChange?.h24 || 0;
+                const changeB = b.priceChange?.h24 || 0;
+                return changeB - changeA;
+            });
+            return sorted.slice(0, limit);
+        }
+        catch (error) {
+            console.error('❌ Greška pri preuzimanju gainers-a:', error.message);
+            return [];
+        }
+    }
+    /**
+     * Preuzmi sve Solana tokene sa filterima
+     */
+    async getSolanaTokens(filters = {}) {
+        try {
+            let tokens = [];
+            // Ako ima maxAge filter, uzmi najnovije
+            if (filters.maxAgeHours) {
+                tokens = await this.getNewestTokens(filters.maxAgeHours);
+            }
+            else {
+                tokens = await this.getTrendingTokens(50);
+            }
+            // Primeni filtere
+            if (filters.minLiquidity) {
+                tokens = tokens.filter(t => t.liquidity?.usd && t.liquidity.usd >= filters.minLiquidity);
+            }
+            if (filters.minVolume24h) {
+                tokens = tokens.filter(t => t.volume?.h24 && t.volume.h24 >= filters.minVolume24h);
+            }
+            return tokens;
+        }
+        catch (error) {
+            console.error('❌ Greška pri preuzimanju Solana tokena:', error.message);
+            return [];
+        }
+    }
+    /**
+     * Formatuj token podatke
+     */
+    formatTokens(pairs, title) {
+        if (pairs.length === 0) {
+            return '\n❌ Nema pronađenih Solana tokena.\n';
+        }
+        let output = `\n${'═'.repeat(70)}\n`;
+        output += `  ${title}\n`;
+        output += `${'═'.repeat(70)}\n\n`;
+        pairs.forEach((pair, index) => {
+            const priceChange = pair.priceChange?.h24 || 0;
+            const emoji = priceChange >= 0 ? '🟢' : '🔴';
+            const sign = priceChange >= 0 ? '+' : '';
+            const age = this.getTokenAge(pair.pairCreatedAt);
+            const volume = this.formatNumber(pair.volume?.h24 || 0);
+            const liquidity = this.formatNumber(pair.liquidity?.usd || 0);
+            output += `${index + 1}. ${emoji} ${pair.baseToken.name} (${pair.baseToken.symbol})\n`;
+            output += `   💵 Cena: $${pair.priceUsd}\n`;
+            output += `   📊 24h: ${sign}${priceChange.toFixed(2)}%\n`;
+            output += `   📈 Volume: $${volume}\n`;
+            output += `   💧 Likvidnost: $${liquidity}\n`;
+            output += `   🔗 DEX: ${pair.dexId}\n`;
+            output += `   ⏰ Starost: ${age}\n`;
+            output += `   📍 Adresa: ${pair.baseToken.address}\n`;
+            output += `\n`;
+        });
+        output += `${'═'.repeat(70)}\n`;
+        output += `💡 Da dodate token: add <adresa>\n`;
+        output += `${'═'.repeat(70)}\n`;
+        return output;
+    }
+    /**
+     * Dobij starost tokena
+     */
+    getTokenAge(timestamp) {
+        if (!timestamp)
+            return 'Nepoznato';
+        const now = Date.now();
+        const ageMs = now - timestamp;
+        const ageHours = ageMs / (1000 * 60 * 60);
+        const ageDays = ageHours / 24;
+        if (ageDays >= 1) {
+            return `${Math.floor(ageDays)} dana`;
+        }
+        else if (ageHours >= 1) {
+            return `${Math.floor(ageHours)} sati`;
+        }
+        else {
+            const ageMinutes = ageMs / (1000 * 60);
+            return `${Math.floor(ageMinutes)} minuta`;
+        }
+    }
+    /**
+     * Formatiraj brojeve
+     */
+    formatNumber(num) {
+        if (num >= 1000000000) {
+            return (num / 1000000000).toFixed(2) + 'B';
+        }
+        if (num >= 1000000) {
+            return (num / 1000000).toFixed(2) + 'M';
+        }
+        if (num >= 1000) {
+            return (num / 1000).toFixed(2) + 'K';
+        }
+        return num.toFixed(2);
+    }
+    /**
+     * Sleep helper
+     */
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+}
+exports.SolanaService = SolanaService;
+//# sourceMappingURL=solana.js.map
