@@ -7,6 +7,7 @@ import { DexScreenerService } from './services/dexscreener';
 import { DiscoveryService } from './services/discoveryService';
 import { PumpFunService } from './services/pumpfun';
 import { SolanaService } from './services/solana';
+import { JupiterService } from './services/jupiter';
 import { loadConfig, validateConfig } from './config';
 
 /**
@@ -19,6 +20,7 @@ class MemecoinBot {
   private discoveryService: DiscoveryService;
   private pumpFunService: PumpFunService;
   private solanaService: SolanaService;
+  private jupiterService: JupiterService;
   private intervalId?: NodeJS.Timeout;
   private discoveryIntervalId?: NodeJS.Timeout;
   private isRunning: boolean = false;
@@ -32,6 +34,7 @@ class MemecoinBot {
     this.discoveryService = new DiscoveryService();
     this.pumpFunService = new PumpFunService();
     this.solanaService = new SolanaService();
+    this.jupiterService = new JupiterService();
     this.rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
@@ -394,6 +397,68 @@ class MemecoinBot {
         }
         break;
 
+      case 'jup-all':
+      case 'jupiter-all':
+        {
+          console.log('🪐 Preuzimam SVE Solana tokene sa Jupiter-a...\n');
+          const forceRefresh = args.includes('--refresh') || args.includes('-r');
+          const tokens = await this.jupiterService.getAllTokens(forceRefresh);
+          console.log(`\n✅ Jupiter Token List\n${'═'.repeat(60)}\n`);
+          console.log(`📊 Ukupno tokena: ${tokens.length}`);
+          console.log(`⏰ Cache: ${forceRefresh ? 'Osveženo' : '5 minuta'}`);
+          console.log(`\n💡 Koristite 'jup-search <naziv>' za pretragu`);
+          console.log(`💡 Koristite 'jup-recent' za nove tokene\n`);
+        }
+        break;
+
+      case 'jup-search':
+      case 'jupiter-search':
+        {
+          if (args.length === 0) {
+            console.log('❌ Upotreba: jup-search <naziv_ili_simbol>');
+            break;
+          }
+          const query = args.join(' ');
+          console.log(`🪐 Pretraga Jupiter tokena: "${query}"...\n`);
+          const limit = 20;
+          const tokens = await this.jupiterService.searchTokens(query, limit);
+          const output = this.jupiterService.formatTokens(tokens, `🔍 JUPITER - Rezultati za "${query}"`);
+          console.log(output);
+        }
+        break;
+
+      case 'jup-recent':
+      case 'jupiter-recent':
+        {
+          console.log('🪐 Tražim nedavne Solana tokene na Jupiter-u...\n');
+          const limit = args.length > 0 ? parseInt(args[0], 10) : 30;
+          const tokens = await this.jupiterService.getRecentTokens(limit);
+          const output = this.jupiterService.formatTokens(tokens, '🆕 JUPITER - NEDAVNI TOKENI');
+          console.log(output);
+          console.log('💡 TIP: Ovi tokeni su heuristički odabrani (bez CoinGecko ID-a)');
+          console.log('💡 Nisu garantovano najnoviji, ali verovatno noviji od popularnih\n');
+        }
+        break;
+
+      case 'jup-popular':
+      case 'jupiter-popular':
+        {
+          console.log('🪐 Tražim popularne Solana tokene na Jupiter-u...\n');
+          const limit = args.length > 0 ? parseInt(args[0], 10) : 20;
+          const tokens = await this.jupiterService.getPopularTokens(limit);
+          const output = this.jupiterService.formatTokens(tokens, '⭐ JUPITER - POPULARNI TOKENI');
+          console.log(output);
+        }
+        break;
+
+      case 'jup-clear':
+      case 'jupiter-clear':
+        {
+          this.jupiterService.clearCache();
+          console.log('✅ Jupiter cache očišćen\n');
+        }
+        break;
+
       case 'pump':
       case 'pumpfun':
         {
@@ -519,10 +584,17 @@ class MemecoinBot {
   losers                 - Top meme losers (24h pad)
   search <query>         - Pretraži konkretni token
 
-☀️ SOLANA TOKENI (DIREKTNO):
+☀️ SOLANA TOKENI (DEX Screener):
   sol-new [hours]        - 🌟 Najnoviji Solana tokeni (default: 24h)
   sol-trending [limit]   - 🔥 Trending Solana tokeni po volumenu
   sol-gainers [limit]    - 🚀 Top Solana gainers (24h rast)
+
+🪐 JUPITER (Solana Token Aggregator):
+  jup-all [--refresh]    - 📊 Preuzmi SVE Solana tokene (sa cache-om)
+  jup-search <query>     - 🔍 Pretraži tokene po nazivu/simbolu
+  jup-recent [limit]     - 🆕 Nedavni/novi tokeni (heuristika)
+  jup-popular [limit]    - ⭐ Popularni verified tokeni
+  jup-clear              - 🗑️  Očisti cache
 
 🚀 PUMP.FUN (Solana Launchpad):
   pump [limit]           - Najnoviji tokeni sa Pump.fun
@@ -540,12 +612,16 @@ class MemecoinBot {
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 💡 KAKO RADI:
-  • Bot koristi DVA izvora: DEX Screener + Pump.fun
+  • Bot koristi TRI izvora: DEX Screener + Jupiter + Pump.fun
   • DEX Screener = svi chain-ovi (Solana, Ethereum, BSC...)
+  • Jupiter = kompletna lista SVIH Solana tokena (PREPORUČENO!)
   • Pump.fun = Solana launchpad sa najnovijim tokenima
   • Automatski filtrira scam tokene (min. likvidnost, volumen)
 
 📝 PRIMERI:
+  jup-all               - 🪐 Preuzmi sve Solana tokene (Jupiter)
+  jup-search pepe       - 🪐 Traži token na Jupiter-u
+  jup-recent 50         - 🪐 Nedavni tokeni (heuristika)
   sol-new 1             - ☀️ Najnoviji Solana tokeni (< 1h)
   sol-trending          - ☀️ Trending Solana tokeni
   sol-gainers           - ☀️ Top Solana gainers
